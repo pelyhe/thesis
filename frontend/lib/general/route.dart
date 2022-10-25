@@ -1,19 +1,25 @@
+import 'package:formula/pages/changePlan.dart';
+import 'package:formula/pages/connectWallet.dart';
+import 'package:formula/pages/declareDamage.dart';
 import 'package:formula/pages/home.dart';
+import 'package:formula/pages/overview.dart';
+import 'package:formula/pages/register.dart';
 import 'package:get/get.dart';
 
 class AppRoutes {
-//route with parameters example:
-//    - static String myPage({required id}) => "mypage/:$id";
-//    - :$id will be the parameter
-//
-//    - GetPage(
-//          name: myPage(
-//              id: '${MyPageScreen.idParameter}'),
-//          page: () => MyPageScreen()),
-//
-//    - in the widget where the route goes should be a static String idParameter="<key>"
-//    - get the parameter by Get.parameters[MyPageScreen.idParameter]
   static String home = "/";
+  static String connectWallet = "/connect";
+  static String register = "/register";
+  static String declareDamage = "/declare-damage";
+  static String overview = "/overview";
+  static String changePlan = "/change-plan";
 
-  static final pages = [GetPage(name: home, page: () => HomePage())];
+  static final pages = [
+    GetPage(name: home, page: () => HomePage()),
+    GetPage(name: connectWallet, page: () => const ConnectWalletPage()),
+    GetPage(name: register, page: () => const RegisterPage()),
+    GetPage(name: declareDamage, page: () => const DeclareDamagePage()),
+    GetPage(name: overview, page: () => const OverviewPage()),
+    GetPage(name: changePlan, page: () => const ChangePlanPage())
+  ];
 }
