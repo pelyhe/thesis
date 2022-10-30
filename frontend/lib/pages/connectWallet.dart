@@ -8,8 +8,6 @@ import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
 import 'package:slider_button/slider_button.dart';
 
-import 'loading.dart';
-
 class ConnectWalletPage extends StatefulWidget {
   const ConnectWalletPage({Key? key}) : super(key: key);
 
@@ -18,37 +16,22 @@ class ConnectWalletPage extends StatefulWidget {
 }
 
 class _ConnectWalletPageState extends State<ConnectWalletPage> {
-  Future? futureCall;
   final controller = ConnectWalletController();
-
-  @override
-  void initState() {
-    super.initState();
-    futureCall = controller.checkWallet();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return FutureBuilder(
-        future: futureCall,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingPage();
-          } else {
-            return GetBuilder<ConnectWalletController>(
-                init: controller,
-                builder: (controller) {
-                  return Scaffold(
-                    backgroundColor: Colors.transparent,
-                    body: scaffoldBody(
-                      context: context,
-                      mobileBody: mobileBody(),
-                      tabletBody: mobileBody(),
-                    ),
-                  );
-                });
-          }
+    return GetBuilder<ConnectWalletController>(
+        init: controller,
+        builder: (controller) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: scaffoldBody(
+              context: context,
+              mobileBody: mobileBody(),
+              tabletBody: mobileBody(),
+            ),
+          );
         });
   }
 
@@ -69,8 +52,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
           const SizedBox(
             height: 100,
           ),
-          Image.asset(
-            "images/login.png",
+          Image.network(
+            "https://cdn-icons-png.flaticon.com/512/5087/5087579.png",
             width: 200,
             height: 200,
           ),
@@ -78,9 +61,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
             height: 100,
           ),
           SliderButton(
-              action: () async {
-                await AuthenticationService.instance.connectWallet();
-              },
+              action: controller.connectWallet,
               label: Text(
                 "Slide to connect",
                 style: TextStyle(
@@ -96,9 +77,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
 }
 
 class ConnectWalletController extends GetxController {
-  Future<void> checkWallet() async {
-    if (AuthenticationService.instance.isWalletConnected) {
-      Get.toNamed('/');
-    }
+  Future<void> connectWallet() async {
+    await AuthenticationService.instance.connectWallet();
+    update();
   }
 }

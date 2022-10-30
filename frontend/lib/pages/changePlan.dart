@@ -60,11 +60,11 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                     ),
                   ),
                 ),
-                createPlanCard('blue-bg.jpg', 1, '2000', '20'),
+                createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc', 1, '2000', '20'),
                 const SizedBox(height: 20),
-                createPlanCard('green-bg.jpg', 2, '4500', '50'),
+                createPlanCard('https://img.freepik.com/free-photo/abstract-blur-empty-green-gradient-studio-well-use-as-backgroundwebsite-templateframebusiness-report_1258-54064.jpg?w=740&t=st=1667135980~exp=1667136580~hmac=b906fcb276bb97ea0c93f79c5375532e9695f671e242f845cb7c3ee49dc35843', 2, '4500', '50'),
                 const SizedBox(height: 20),
-                createPlanCard('red-bg.jpg', 3, '7500', '100'),
+                createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-soft-red-background-christmas-valentines-layout-design-studio-room-web-template-business-report-with-smooth-circle-gradient-color_1258-54520.jpg?w=740&t=st=1667136021~exp=1667136621~hmac=1b33603b6aab646543dbc2d445f76f106a108b28009c49651f710f330f3c2b8f', 3, '7500', '100'),
                 const SizedBox(
                   height: 40,
                 ),
@@ -96,7 +96,7 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
     );
   }
 
-  createPlanCard(String pictureName, int i, String price, String percentage) {
+  createPlanCard(String pictureUri, int i, String price, String percentage) {
     return InkWell(
       onTap: () => controller.setPlan(i),
       child: SizedBox(
@@ -114,7 +114,7 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("images/$pictureName"),
+                image: NetworkImage(pictureUri),
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topCenter,
               ),

@@ -13,7 +13,6 @@ class AuthenticationService extends GetxController {
       bridge: 'https://bridge.walletconnect.org',
       clientMeta: const PeerMeta(
           name: 'Gas heating insurance',
-          description: 'App for those who heats with gas',
           url: 'https://walletconnect.org',
           icons: [
             'https://files.gitbook.com/v0/b/gitbook-legacy-files/o/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media'
@@ -25,11 +24,9 @@ class AuthenticationService extends GetxController {
       try {
         _session = await connector.createSession(onDisplayUri: (uri) async {
           _uri = uri;
-          //await launchUrlString(uri, mode: LaunchMode.externalApplication);
-          isWalletConnected = true;
-          Get.toNamed('/');
+          await launchUrlString(uri, mode: LaunchMode.externalApplication);
+
         });
-        update();
       } catch (exp) {
         print(exp);
       }
