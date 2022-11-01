@@ -115,7 +115,7 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(pictureUri),
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
                 alignment: Alignment.topCenter,
               ),
             ),

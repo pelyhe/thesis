@@ -1,9 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_web3/ethers.dart';
 import 'package:formula/components/bottomNavBar.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
@@ -217,7 +214,7 @@ class _OverviewPageState extends State<OverviewPage> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(pictureUri),
-              fit: BoxFit.fitWidth,
+              fit: BoxFit.fill,
               alignment: Alignment.topCenter,
             ),
           ),

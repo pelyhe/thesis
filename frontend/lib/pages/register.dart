@@ -6,10 +6,15 @@ import 'package:formula/components/bottomNavBar.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
+import 'package:formula/pages/loading.dart';
 import 'package:get/get.dart';
 import 'package:trinsic_dart/trinsic.dart';
-//import 'package:trinsic_dart/src/trinsic_service.dart';
-//import 'package:trinsic_dart/src/trinsic_util.dart';
+import 'package:trinsic_dart/src/trinsic_service.dart';
+import 'package:trinsic_dart/src/trinsic_util.dart';
+import 'package:trinsic_dart/src/proto/services/universal-wallet/v1/universal-wallet.pbgrpc.dart';
+import 'package:trinsic_dart/src/proto/services/verifiable-credentials/v1/verifiable-credentials.pbgrpc.dart';
+import 'package:trinsic_dart/src/proto/services/account/v1/account.pbgrpc.dart';
+import 'package:trinsic_dart/src/proto/services/provider/v1/provider.pbgrpc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -24,21 +29,29 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return GetBuilder<RegisterPageController>(
-        init: controller,
-        builder: (controller) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.orange,
-              title: const Text('Gas Insurance'),
-            ),
-            backgroundColor: Colors.transparent,
-            body: scaffoldBody(
-              context: context,
-              mobileBody: mobileBody(),
-              tabletBody: mobileBody(),
-            ),
-          );
+    return FutureBuilder(
+        future: controller.setupTrinsic(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingPage();
+          } else {
+            return GetBuilder<RegisterPageController>(
+                init: controller,
+                builder: (controller) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      backgroundColor: AppColors.orange,
+                      title: const Text('Gas Insurance'),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    body: scaffoldBody(
+                      context: context,
+                      mobileBody: mobileBody(),
+                      tabletBody: mobileBody(),
+                    ),
+                  );
+                });
+          }
         });
   }
 
@@ -66,22 +79,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: const [
                   Icon(Icons.warning,
                       size: 17, color: Color.fromARGB(255, 247, 16, 0)),
-                  Text(
-                    "You have to be older than 18 to take out an insurance.",
-                    style: TextStyle(
-                        fontSize: 17, color: Color.fromARGB(255, 255, 17, 0)),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      "You have to be older than 18 to take out an insurance.",
+                      style: TextStyle(
+                          fontSize: 17, color: Color.fromARGB(255, 255, 17, 0)),
+                    ),
                   )
                 ],
               ),
-              const SizedBox(height: 15),
-              Text(
-                "Upload a picture of the frontside of your ID card",
-                style:
-                    TextStyle(fontSize: 20, color: AppColors.navigationColor),
-              ),
-              /*const SizedBox(height: 8),
+              const SizedBox(height: 25),
+
+              // ***************************************************************
+              // ***************************************************************
+
               OutlinedButton(
-                onPressed: controller.pickFile,
+                onPressed: controller.verifyVC,
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0))),
@@ -90,57 +106,27 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: 1.5,
                       style: BorderStyle.solid)),
                   minimumSize:
-                      MaterialStateProperty.all<Size>(const Size(100, 35)),
+                      MaterialStateProperty.all<Size>(const Size(150, 35)),
                   maximumSize:
-                      MaterialStateProperty.all<Size>(const Size(125, 35)),
+                      MaterialStateProperty.all<Size>(const Size(175, 35)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.folder,
+                    Icon(Icons.check_circle_outline,
                         color: AppColors.navigationColor, size: 16),
                     const SizedBox(width: 8),
                     Text(
-                      "Pick a file",
-                      style: TextStyle(
-                          color: AppColors.navigationColor, fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),*/
-              const SizedBox(height: 15),
-              Text(
-                "Upload a picture of the backside of your ID card",
-                style:
-                    TextStyle(fontSize: 20, color: AppColors.navigationColor),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton(
-                onPressed: controller.pickFile,
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0))),
-                  side: MaterialStateProperty.all(BorderSide(
-                      color: AppColors.navigationColor,
-                      width: 1.5,
-                      style: BorderStyle.solid)),
-                  minimumSize:
-                      MaterialStateProperty.all<Size>(const Size(100, 35)),
-                  maximumSize:
-                      MaterialStateProperty.all<Size>(const Size(125, 35)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.folder,
-                        color: AppColors.navigationColor, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Pick a file",
+                      "Verify credentials",
                       style: TextStyle(
                           color: AppColors.navigationColor, fontSize: 16),
                     ),
                   ],
                 ),
               ),
+
+              // ***************************************************************
+              // ***************************************************************
+
               const SizedBox(height: 40),
               Text(
                 "Choose your plan",
@@ -152,11 +138,23 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppColors.navigationColor),
               ),
               const SizedBox(height: 20),
-              createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc', 1, '2000', '20'),
+              createPlanCard(
+                  'https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc',
+                  1,
+                  '2000',
+                  '20'),
               const SizedBox(height: 20),
-              createPlanCard('https://img.freepik.com/free-photo/abstract-blur-empty-green-gradient-studio-well-use-as-backgroundwebsite-templateframebusiness-report_1258-54064.jpg?w=740&t=st=1667135980~exp=1667136580~hmac=b906fcb276bb97ea0c93f79c5375532e9695f671e242f845cb7c3ee49dc35843', 2, '4500', '50'),
+              createPlanCard(
+                  'https://img.freepik.com/free-photo/abstract-blur-empty-green-gradient-studio-well-use-as-backgroundwebsite-templateframebusiness-report_1258-54064.jpg?w=740&t=st=1667135980~exp=1667136580~hmac=b906fcb276bb97ea0c93f79c5375532e9695f671e242f845cb7c3ee49dc35843',
+                  2,
+                  '4500',
+                  '50'),
               const SizedBox(height: 20),
-              createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-soft-red-background-christmas-valentines-layout-design-studio-room-web-template-business-report-with-smooth-circle-gradient-color_1258-54520.jpg?w=740&t=st=1667136021~exp=1667136621~hmac=1b33603b6aab646543dbc2d445f76f106a108b28009c49651f710f330f3c2b8f', 3, '7500', '100'),
+              createPlanCard(
+                  'https://img.freepik.com/free-photo/abstract-luxury-soft-red-background-christmas-valentines-layout-design-studio-room-web-template-business-report-with-smooth-circle-gradient-color_1258-54520.jpg?w=740&t=st=1667136021~exp=1667136621~hmac=1b33603b6aab646543dbc2d445f76f106a108b28009c49651f710f330f3c2b8f',
+                  3,
+                  '7500',
+                  '100'),
               Center(
                 child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30),
@@ -206,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(pictureUri),
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
                 alignment: Alignment.topCenter,
               ),
             ),
@@ -270,23 +268,22 @@ class RegisterPageController extends GetxController {
   List<File>? idCardPictures;
   int plan = 1;
 
-  /*Future<void> setupTrinsic() async {
-    var trinsic = TrinsicService(trinsicConfig(), null);
-    var ecosystem = await trinsic.provider().createEcosystem();
-    var insuranceCompany = await trinsic.account().signIn();
-    trinsic.serviceOptions.authToken = insuranceCompany;
-    var info = await trinsic.account().getInfo();
-    print("Account info=$info");
-  }*/
+  // TODO: setup the Trinsic ecosystem
+  setupTrinsic() async {
+    var trinsic = TrinsicService(trinsicConfig(), null);  // this function returns with no error
 
-  Future<void> pickFile() async {
-    /*FilePickerResult? result = await FilePicker.platform.pickFiles();
-    print(result!.files.first.name);
-    if (result != null) {
-    } else {
-      // User canceled the picker
-      print('cancelled');
-    }*/
+    // here, the createEcosystem() throws this:
+    // "Invalid argument(s): Failed to load dynamic library 'libokapi.so': dlopen failed: library "libokapi.so" not found"
+    // something wrong with the Okapi library
+    var ecosystem = await trinsic.provider().createEcosystem().catchError((e)=>print(e));
+
+    // can't sign in without an ecosystem, throws
+    // "$ecosystem requested `default` does not exist"
+    var insuranceCompany = await trinsic.account().signIn().catchError((e)=>print(e));
+  }
+
+  verifyVC() {
+
   }
 
   setPlan(int p) {

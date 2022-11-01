@@ -1,3 +1,4 @@
+import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,6 +8,9 @@ import 'package:formula/general/utils.dart';
 import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
 import 'package:slider_button/slider_button.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 class ConnectWalletPage extends StatefulWidget {
   const ConnectWalletPage({Key? key}) : super(key: key);
@@ -17,7 +21,7 @@ class ConnectWalletPage extends StatefulWidget {
 
 class _ConnectWalletPageState extends State<ConnectWalletPage> {
   final controller = ConnectWalletController();
-  
+
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
@@ -77,8 +81,45 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
 }
 
 class ConnectWalletController extends GetxController {
+  SessionStatus? session;
+  String? account;
+
   Future<void> connectWallet() async {
-    await AuthenticationService.instance.connectWallet();
-    update();
+    var connector = WalletConnect(
+        bridge: 'https://bridge.walletconnect.org',
+        clientMeta: const PeerMeta(
+            name: 'Gas heating insurance',
+            url: 'https://walletconnect.org',
+            icons: [
+              'https://files.gitbook.com/v0/b/gitbook-legacy-files/o/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media'
+            ]));
+
+    // Subscribe to events
+    connector.on('connect', (session) => print(session));
+    connector.on('session_update', (payload) => print(payload));
+    connector.on('disconnect', (session) => print(session));
+
+    // Create a new session
+    if (!connector.connected) {
+      final tmp = await connector.createSession(
+          chainId: 5,
+          onDisplayUri: (uri) async => {
+                await launchUrlString(uri, mode: LaunchMode.externalApplication)
+              });
+      AuthenticationService.instance.session = tmp;
+    }
+
+    AuthenticationService.instance.account =
+        AuthenticationService.instance.session!.accounts[0];
+    Get.toNamed('/');
+
+    // TODO: https://github.com/MetaMask/metamask-mobile/issues/3735
+    /*if (account != null) {
+      final client = Web3Client("	https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", Client());
+      EthereumWalletConnectProvider provider =
+          EthereumWalletConnectProvider(connector);
+      credentials = WalletConnectEthereumCredentials(provider: provider);
+      yourContract = YourContract(address: contractAddr, client: client);
+    }*/
   }
 }

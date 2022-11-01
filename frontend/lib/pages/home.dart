@@ -3,11 +3,7 @@ import 'package:formula/components/bottomNavBar.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
-import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
-import 'package:slider_button/slider_button.dart';
-
-import 'loading.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -82,7 +78,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HomePageController extends GetxController {
-  bool isStatusActive = true;
+  bool isStatusActive = false;
 
   // TODO: isStatusActive = hasInsurance() function from sc
 
