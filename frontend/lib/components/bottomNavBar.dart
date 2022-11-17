@@ -20,7 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: const Icon(Icons.home),
-          label: 'Home',
+          label: 'Overview',
           backgroundColor: AppColors.navigationColor,
         ),
         BottomNavigationBarItem(
@@ -29,14 +29,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
           backgroundColor: AppColors.navigationColor,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.payments),
-          label: 'Overview',
+          icon: const Icon(Icons.how_to_vote_sharp),
+          label: 'Judge reports',
           backgroundColor: AppColors.navigationColor,
         ),
       ],
       currentIndex: BottomNavBar.selectedIndex,
       selectedItemColor: AppColors.orange,
-      onTap: controller.onItemTapped,
+      onTap:controller.onItemTapped,
     );
   }
 }
@@ -46,13 +46,13 @@ class BottomNavBarController extends GetxController {
     BottomNavBar.selectedIndex = index;
     switch (index) {
       case 0:
-        Get.toNamed('/');
+        Get.toNamed('/overview');
         break;
       case 1:
         Get.toNamed('/declare-damage');
         break;
       case 2:
-        Get.toNamed('/overview');
+        Get.toNamed('/judge');
         break;
     }
     update();

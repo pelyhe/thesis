@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:formula/components/bottomNavBar.dart';
+import 'package:formula/components/payWithGitPopup.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
@@ -47,24 +48,52 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 50.0),
-                    child: Text(
-                      "Choose a plan",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          fontSize: 28,
-                          color: AppColors.navigationColor),
-                    ),
+                  child: Text(
+                    "Choose a plan",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        fontSize: 28,
+                        color: AppColors.navigationColor),
                   ),
                 ),
-                createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc', 1, '2000', '20'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10.0),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.warning,
+                          size: 17, color: Color.fromARGB(255, 247, 16, 0)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Fees will be payed automatically after changing plan.",
+                          style: TextStyle(
+                              fontSize: 17, color: Color.fromARGB(255, 255, 17, 0)),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                createPlanCard(
+                    'https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc',
+                    1,
+                    '2000',
+                    '20'),
                 const SizedBox(height: 20),
-                createPlanCard('https://img.freepik.com/free-photo/abstract-blur-empty-green-gradient-studio-well-use-as-backgroundwebsite-templateframebusiness-report_1258-54064.jpg?w=740&t=st=1667135980~exp=1667136580~hmac=b906fcb276bb97ea0c93f79c5375532e9695f671e242f845cb7c3ee49dc35843', 2, '4500', '50'),
+                createPlanCard(
+                    'https://img.freepik.com/free-photo/abstract-blur-empty-green-gradient-studio-well-use-as-backgroundwebsite-templateframebusiness-report_1258-54064.jpg?w=740&t=st=1667135980~exp=1667136580~hmac=b906fcb276bb97ea0c93f79c5375532e9695f671e242f845cb7c3ee49dc35843',
+                    2,
+                    '4500',
+                    '50'),
                 const SizedBox(height: 20),
-                createPlanCard('https://img.freepik.com/free-photo/abstract-luxury-soft-red-background-christmas-valentines-layout-design-studio-room-web-template-business-report-with-smooth-circle-gradient-color_1258-54520.jpg?w=740&t=st=1667136021~exp=1667136621~hmac=1b33603b6aab646543dbc2d445f76f106a108b28009c49651f710f330f3c2b8f', 3, '7500', '100'),
+                createPlanCard(
+                    'https://img.freepik.com/free-photo/abstract-luxury-soft-red-background-christmas-valentines-layout-design-studio-room-web-template-business-report-with-smooth-circle-gradient-color_1258-54520.jpg?w=740&t=st=1667136021~exp=1667136621~hmac=1b33603b6aab646543dbc2d445f76f106a108b28009c49651f710f330f3c2b8f',
+                    3,
+                    '7500',
+                    '100'),
                 const SizedBox(
                   height: 40,
                 ),
@@ -72,14 +101,11 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       child: ElevatedButton(
-                        onPressed: () {
-                          // call changePlan sm function
-                          print('OK.');
-                          Get.toNamed("/overview");
-                        },
+                        onPressed: () => controller.submit(context),
                         style: ButtonStyle(
-                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0))),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0))),
                           backgroundColor:
                               MaterialStateProperty.all(AppColors.orange),
                           minimumSize: MaterialStateProperty.all<Size>(
@@ -151,7 +177,9 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                             letterSpacing: 1,
                             color: Colors.white),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Text(
                         '$percentage% compensation',
                         style: const TextStyle(
@@ -178,5 +206,33 @@ class ChangePlanController extends GetxController {
   setPlan(int p) {
     currentPlan = p;
     update();
+  }
+
+  submit(BuildContext context) {
+    if (balanceIsNotNull()) {
+      final res = getNumberOfUsableTokens();
+      showDialog(
+          context: context,
+          builder: (BuildContext ctx) => PayWithTokens(
+                tokenNumber: res,
+              ));
+    } else {
+      // call changePlan sc function
+      Get.toNamed('/overview');
+    }
+  }
+
+  int getNumberOfUsableTokens() {
+    // TODO: call sc function, which returns the number of tokens which can
+    // be used for plan change
+
+    // it returns 0, if no tokens, number of tokens if its not enoguh for plan change
+    // and the number of tokens required for the plan change, if its less than balance
+    return 3;
+  }
+
+  bool balanceIsNotNull() {
+    // call sc similar function
+    return true;
   }
 }

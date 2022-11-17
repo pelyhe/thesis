@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:formula/components/bottomNavBar.dart';
@@ -94,6 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 25),
 
               // ***************************************************************
+              //        THIS IS THE RELEVANT VERIFY CREDENTIALS BUTTON
               // ***************************************************************
 
               OutlinedButton(
@@ -264,27 +266,50 @@ class _RegisterPageState extends State<RegisterPage> {
 }
 
 class RegisterPageController extends GetxController {
-  int selectedNavIndex = 0;
-  List<File>? idCardPictures;
   int plan = 1;
+  TrinsicService? trinsic;
+  String? insuranceCompany;
 
-  // TODO: setup the Trinsic ecosystem
+
   setupTrinsic() async {
-    var trinsic = TrinsicService(trinsicConfig(), null);  // this function returns with no error
+    /*var trinsic = TrinsicService(trinsicConfig(), null);
 
-    // here, the createEcosystem() throws this:
-    // "Invalid argument(s): Failed to load dynamic library 'libokapi.so': dlopen failed: library "libokapi.so" not found"
-    // something wrong with the Okapi library
-    var ecosystem = await trinsic.provider().createEcosystem().catchError((e)=>print(e));
+    var ecosystem = await trinsic.provider().createEcosystem();
+    var ecosystemId = ecosystem.ecosystem.id;
 
-    // can't sign in without an ecosystem, throws
-    // "$ecosystem requested `default` does not exist"
-    var insuranceCompany = await trinsic.account().signIn().catchError((e)=>print(e));
+    //var allison = await trinsic.account().signIn();
+    //var clinic = await trinsic.account().signIn();
+    var insuranceCompany = await trinsic.account().signIn();
+
+    trinsic.serviceOptions.authToken = insuranceCompany;
+
+    var templateData = File(path.join(path.current, "..", "trinsic-config", "templateData.json"));
+    var credentialJson = await templateData.readAsString();
+    
+     var insertResponse = await trinsic
+      .wallet().searchWallet();
+
+    var proofResponse = await trinsic.credential().createProof(
+        CreateProofRequest(
+            revealDocumentJson: proofRequestJson, itemId: itemId));
+    var credentialProof = proofResponse.proofDocumentJson;
+    print("Proof: $credentialProof");
+
+    trinsic.serviceOptions.authToken = airline;
+
+    var verifyResult = await trinsic
+        .credential()
+        .verifyProof(VerifyProofRequest(proofDocumentJson: credentialProof));
+
+    print("Verification result: $verifyResult");
+    assert(verifyResult.validationResults["SignatureVerification"]?.isValid ??
+        false);
+*/
   }
 
-  verifyVC() {
+  createProof() async {}
 
-  }
+  verifyVC() {}
 
   setPlan(int p) {
     plan = p;

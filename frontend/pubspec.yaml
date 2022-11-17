@@ -48,6 +48,7 @@ dependencies:
   trinsic_dart: ^1.7.0
   dart_web3: ^0.0.3
   okapi_dart: ^1.6.1
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_test:
@@ -72,8 +73,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  #assets:
-  #  - images/
+  assets:
+    - assets/images/git.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

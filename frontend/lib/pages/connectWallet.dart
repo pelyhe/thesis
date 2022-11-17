@@ -65,7 +65,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
             height: 100,
           ),
           SliderButton(
-              action: controller.connectWallet,
+              action: () => controller.connectWallet(context),
               label: Text(
                 "Slide to connect",
                 style: TextStyle(
@@ -84,7 +84,7 @@ class ConnectWalletController extends GetxController {
   SessionStatus? session;
   String? account;
 
-  Future<void> connectWallet() async {
+  Future<void> connectWallet(BuildContext context) async {
     var connector = WalletConnect(
         bridge: 'https://bridge.walletconnect.org',
         clientMeta: const PeerMeta(
@@ -111,7 +111,7 @@ class ConnectWalletController extends GetxController {
 
     AuthenticationService.instance.account =
         AuthenticationService.instance.session!.accounts[0];
-    Get.toNamed('/');
+    Navigator.pushReplacementNamed(context, '/loading');
 
     // TODO: https://github.com/MetaMask/metamask-mobile/issues/3735
     /*if (account != null) {

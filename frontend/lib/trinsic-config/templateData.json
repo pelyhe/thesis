@@ -1,0 +1,10 @@
+{
+    "Name": {
+        "type": "string",
+        "description": "Name of user"
+    },
+    "Age":{
+        "type": "number",
+        "description": "Age of user"
+    }
+}

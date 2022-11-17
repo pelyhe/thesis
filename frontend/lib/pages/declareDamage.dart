@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -66,32 +70,134 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
                         fontSize: 20, color: AppColors.navigationColor),
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: controller.pickFile,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: AppColors.navigationColor,
-                          width: 1.5,
-                          style: BorderStyle.solid)),
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(100, 35)),
-                      maximumSize:
-                          MaterialStateProperty.all<Size>(const Size(125, 35)),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.folder,
-                            color: AppColors.navigationColor, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Pick a file",
-                          style: TextStyle(
-                              color: AppColors.navigationColor, fontSize: 16),
+                  Row(
+                    children: [
+                      OutlinedButton(
+                        onPressed: controller.reportFile == null
+                            ? controller.pickFile
+                            : null,
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.disabled)) {
+                                return Colors.grey;
+                              } else {
+                                return Colors.transparent;
+                              }
+                            },
+                          ),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0))),
+                          side: MaterialStateProperty.all(BorderSide(
+                              color: AppColors.orange,
+                              style: BorderStyle.solid)),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(100, 35)),
+                          maximumSize: MaterialStateProperty.all<Size>(
+                              const Size(125, 35)),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.folder,
+                                color: AppColors.navigationColor, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Pick a file",
+                              style: TextStyle(
+                                  color: AppColors.navigationColor,
+                                  fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      if (controller.reportFile != null)
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                      controller.reportFile!.path.split('/').last)),
+                              IconButton(
+                                  onPressed: controller.deleteReportFile,
+                                  icon: const Icon(Icons.delete))
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    "Upload a picture of the damage",
+                    style: TextStyle(
+                        fontSize: 20, color: AppColors.navigationColor),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      OutlinedButton(
+                        onPressed: controller.pictureFile == null
+                            ? controller.pickPicture
+                            : null,
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.disabled)) {
+                                return Colors.grey;
+                              } else {
+                                return Colors.transparent;
+                              }
+                            },
+                          ),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0))),
+                          side: MaterialStateProperty.all(BorderSide(
+                              color: AppColors.orange,
+                              style: BorderStyle.solid)),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(100, 35)),
+                          maximumSize: MaterialStateProperty.all<Size>(
+                              const Size(125, 35)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.folder,
+                                color: AppColors.navigationColor, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Pick a file",
+                              style: TextStyle(
+                                  color: AppColors.navigationColor,
+                                  fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      if (controller.pictureFile != null)
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                      controller.pictureFile!.path.split('/').last)),
+                              IconButton(
+                                  onPressed: controller.deletePictureFile,
+                                  icon: const Icon(Icons.delete))
+                            ],
+                          ),
+                        )
+                    ],
                   ),
                   const SizedBox(
                     height: 40,
@@ -139,11 +245,7 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
                     child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         child: ElevatedButton(
-                          onPressed: () {
-                            // call declare damage sm. functio
-                            print('OK.');
-                            Get.toNamed("/");
-                          },
+                          onPressed: () => controller.submit(context),
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
@@ -167,6 +269,9 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
 class DeclareDamageController extends GetxController {
   late FormGroup formGroup;
   String totalDamage = "";
+  File? reportFile;
+  File? pictureFile;
+  List<int>? reportFileBytes;
 
   final FormControl totalDamageControl =
       FormControl<String>(validators: [Validators.required, Validators.number]);
@@ -178,13 +283,96 @@ class DeclareDamageController extends GetxController {
   }
 
   void pickFile() async {
-    // TODO: share on IPFS
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    print(result!.files.first.name);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'docx', 'xlsx'],
+    );
     if (result != null) {
+      print(result.files.last);
+      reportFile = File(result.files.last.path!);
+      print("file: $reportFile");
+      reportFileBytes = await reportFile!.readAsBytes();
+      update();
     } else {
-      // User canceled the picker
       print('cancelled');
     }
+  }
+
+    void pickPicture() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'gif'],
+    );
+    if (result != null) {
+      print(result.files.last);
+      pictureFile = File(result.files.last.path!);
+      print("file: $pictureFile");
+      reportFileBytes = await pictureFile!.readAsBytes();
+      update();
+    } else {
+      print('cancelled');
+    }
+  }
+
+  void deleteReportFile() {
+    reportFile = null;
+    update();
+  }
+
+  void deletePictureFile() {
+    pictureFile = null;
+    update();
+  }
+
+  Future<void> submit(BuildContext context) async {
+    if (reportFile != null || pictureFile != null) {
+      var str = await shareReportOnIpfs();
+      await sharePictureOnIpfs(str);
+      Get.toNamed('/overview');
+    } else {
+      const snackBar = SnackBar(
+          content: Text("You have to upload both files.", style: TextStyle(fontSize: 20)),
+          backgroundColor: Colors.red,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+  }
+
+  Future<void> sharePictureOnIpfs(contractString) async {
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            "http://vm.niif.cloud.bme.hu:14434/storeFile?id=$contractString"));
+    request.files.add(http.MultipartFile(
+        'file', pictureFile!.readAsBytes().asStream(), pictureFile!.lengthSync(),
+        filename: pictureFile!.path.split('/').last));
+    var res = await request.send();
+    final resBody = await res.stream.bytesToString();
+    print(jsonDecode(resBody)["path"]);
+  }
+
+  Future<String> shareReportOnIpfs() async {
+    final contractString = getRandomString(20);
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            "http://vm.niif.cloud.bme.hu:14434/storeFile?id=$contractString"));
+    request.files.add(http.MultipartFile(
+        'file', reportFile!.readAsBytes().asStream(), reportFile!.lengthSync(),
+        filename: reportFile!.path.split('/').last));
+    var res = await request.send();
+    final resBody = await res.stream.bytesToString();
+    print(jsonDecode(resBody)["path"]);
+    return contractString;
+  }
+
+  String getRandomString(int length) {
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    Random _rnd = Random.secure();
+
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
   }
 }
