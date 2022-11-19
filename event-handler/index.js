@@ -1,7 +1,7 @@
 const http = require('http');
 const Web3 = require('web3');
-const environment = require('../config/environment.js');
-const insuranceTokenABI = require('../config/insuranceTokenABI.js');
+const environment = require('./config/environment.js');
+const insuranceTokenABI = require('./config/insuranceTokenABI.js');
 
 // declare server variables
 const hostname = '127.0.0.1';

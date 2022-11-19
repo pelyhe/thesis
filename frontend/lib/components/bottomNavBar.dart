@@ -7,12 +7,30 @@ import 'package:get/get.dart';
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
   static int selectedIndex = 0;
+
+    static toOverview() {
+    BottomNavBar.selectedIndex = 0;
+    Get.toNamed('/overview');
+  }
+
+  static toDeclare() {
+    BottomNavBar.selectedIndex = 1;
+    Get.toNamed('/declare-damage');
+  }
+
+  static toJudgement() {
+    BottomNavBar.selectedIndex = 2;
+    Get.toNamed('/judge');
+  }
+
+
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final controller = BottomNavBarController();
+
 
   @override
   Widget build(BuildContext context) {

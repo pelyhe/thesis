@@ -1,16 +1,21 @@
+import 'package:formula/config/GasInsurance.g.dart';
+import 'package:formula/config/ethereumTransaction.dart';
+import 'package:http/http.dart' as http;
 import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
 import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
 import 'package:slider_button/slider_button.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
+//import 'package:web3dart/web3dart.dart';
+import 'package:walletconnect_dart/src/providers/ethereum_walletconnect_provider.dart';
 
 class ConnectWalletPage extends StatefulWidget {
   const ConnectWalletPage({Key? key}) : super(key: key);
@@ -81,10 +86,9 @@ class _ConnectWalletPageState extends State<ConnectWalletPage> {
 }
 
 class ConnectWalletController extends GetxController {
-  SessionStatus? session;
-  String? account;
 
   Future<void> connectWallet(BuildContext context) async {
+
     var connector = WalletConnect(
         bridge: 'https://bridge.walletconnect.org',
         clientMeta: const PeerMeta(
@@ -110,16 +114,17 @@ class ConnectWalletController extends GetxController {
     }
 
     AuthenticationService.instance.account =
-        AuthenticationService.instance.session!.accounts[0];
-    Navigator.pushReplacementNamed(context, '/loading');
+        EthereumAddress.fromHex(AuthenticationService.instance.session!.accounts[0]);
 
     // TODO: https://github.com/MetaMask/metamask-mobile/issues/3735
-    /*if (account != null) {
-      final client = Web3Client("	https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", Client());
+    if (AuthenticationService.instance.account != null) {
+      final client = Web3Client(Environment.provider, http.Client());
       EthereumWalletConnectProvider provider =
           EthereumWalletConnectProvider(connector);
-      credentials = WalletConnectEthereumCredentials(provider: provider);
-      yourContract = YourContract(address: contractAddr, client: client);
-    }*/
+      AuthenticationService.instance.credentials = WalletConnectEthereumCredentials(provider: provider);
+      AuthenticationService.instance.contract = GasInsurance(address: Environment.contractAddress, client: client);
+    }
+
+    Navigator.pushReplacementNamed(context, '/splash');
   }
 }

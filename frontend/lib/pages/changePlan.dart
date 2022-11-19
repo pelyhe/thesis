@@ -218,7 +218,7 @@ class ChangePlanController extends GetxController {
               ));
     } else {
       // call changePlan sc function
-      Get.toNamed('/overview');
+      BottomNavBar.toOverview();
     }
   }
 

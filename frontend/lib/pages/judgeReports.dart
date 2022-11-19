@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:dart_web3/credentials.dart';
 import 'package:formula/pages/loading.dart';
+import 'package:formula/service/authService.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -76,7 +78,7 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
           child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               
-              child: Image.file(File('/data/user/0/com.example.formula/app_flutter/Screenshot_2022-11-15-10-01-20-438_com.facebook.katana(10).jpg'))),
+              child: Image.file(File(controller.picture!.path))),
               
         ),
         Flexible(
@@ -122,19 +124,22 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
 class JudgeReportsController extends GetxController {
 
   File? picture;
+  EthereumAddress? acc;
 
   getPictureFromIpfs() async {
-    print('szetbaszom a fjed');
+    final res = await AuthenticationService.instance.contract!
+        .getRandomDamagePicture();
+    acc = res.var1;
+    final path = res.var2;
     final url =
-        'http://vm.niif.cloud.bme.hu:14434/getFile?path=/G5qYugi3f16bxlxI1WsN/Screenshot_2022-11-15-10-01-20-438_com.facebook.katana.jpg';
+        'http://vm.niif.cloud.bme.hu:14434/getFile?path=$path';
     final response = await http.get(Uri.parse(url));
     String header = response.headers['content-disposition']!;
     int fromIndex = header.indexOf('=');
     String filename = header.substring(fromIndex + 1);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    String path = '$dir/$filename';
-    print(path);
-    picture = await File(path).writeAsBytes(response.bodyBytes);
+    String filePath = '$dir/$filename';
+    picture = await File(filePath).writeAsBytes(response.bodyBytes);
     update();
   }
   

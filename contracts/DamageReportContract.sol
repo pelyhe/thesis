@@ -8,9 +8,11 @@ import "./GasInsuranceContract.sol";
 abstract contract DamageReport is GasInsurance {
     uint32 internal nextReportId;
     uint256 judgementCoold = 1 days;
+    uint32 internal activeReports;
 
     constructor() {
         nextReportId = 1;
+        activeReports = 0;
     }
 
     event CompensationPayment(address _address, uint256 damagePrice);
@@ -18,11 +20,12 @@ abstract contract DamageReport is GasInsurance {
 
     struct Report {
         uint32 id;
-        bytes pictureIpfsHash;
-        bytes documentIpfsHash;
+        string pictureIpfsHash;
+        string documentIpfsHash;
         uint32 damagePrice;
         uint32 compensationPrice;
         uint8 numberOfConfirmations;
+        address confirmedBy;        // to be sure that one person cannot confirm twice
         bool approved;
     }
 
@@ -56,6 +59,11 @@ abstract contract DamageReport is GasInsurance {
         _;
     }
 
+    modifier confirmedBefore(Report memory report, address _address) {
+        require(report.confirmedBy != _address, "You confirmed this before!");
+        _;
+    }
+
     function hasReport(address _address) public view returns (bool) {
         if (reports[_address].id > 0) {
             return true;
@@ -64,16 +72,17 @@ abstract contract DamageReport is GasInsurance {
     }
 
     function declareDamage(
-        bytes memory pictureHash,
-        bytes memory documentHash,
+        address _address,
+        string memory pictureHash,
+        string memory documentHash,
         uint32 damagePrice
-    ) external ownsInsurance(msg.sender) isInsuranceStatusActive(msg.sender) {
-        Insurance memory insurance = insurances[msg.sender];
+    ) external ownsInsurance(_address) isInsuranceStatusActive(_address) {
+        Insurance memory insurance = insurances[_address];
         uint32 compensation = calculateCompensation(
             damagePrice,
             insurance.plan
         );
-
+        activeReports++;
         Report memory report = Report({
             id: nextReportId,
             pictureIpfsHash: pictureHash,
@@ -81,12 +90,13 @@ abstract contract DamageReport is GasInsurance {
             damagePrice: damagePrice,
             compensationPrice: compensation,
             numberOfConfirmations: 0,
+            confirmedBy: address(0),
             approved: false
         });
 
-        emit DamageDeclaration(msg.sender, report);
-        reports[msg.sender] = report;
-        report_keys.push(msg.sender);
+        emit DamageDeclaration(_address, report);
+        reports[_address] = report;
+        report_keys.push(_address);
         nextReportId++;
     }
 
@@ -105,6 +115,7 @@ abstract contract DamageReport is GasInsurance {
         ownsInsurance(_address)
         reportExists(_address)
     {
+        activeReports--;
         Report storage report = reports[_address];
         report.approved = true;
         approvedReports[_address] = report;
@@ -114,23 +125,27 @@ abstract contract DamageReport is GasInsurance {
 
     // a user confirms the report
     // if s/he is the second, who confirmed it, the report will be approved
-    function confirmReport(address _address)
+    function confirmReport(address reviewer, address reviewee)
         external
-        ownsInsurance(_address)
-        reportExists(_address)
-        ownsInsurance(msg.sender)
-        canJudge(msg.sender)
+        ownsInsurance(reviewee)
+        reportExists(reviewee)
+        ownsInsurance(reviewer)
+        canJudge(reviewer)
+        confirmedBefore(reports[reviewee], reviewer)
     {
-        Report storage report = reports[_address];
+        Report storage report = reports[reviewee];
         report.numberOfConfirmations++;
+        _mint(reviewer, 1);
         if (report.numberOfConfirmations > 1) {
             report.approved = true;
-            approvedReports[_address] = report;
+            approvedReports[reviewee] = report;
             delete report_keys[report.id-1];       // deletes the element from key, and leave a space there
-            delete (reports[_address]);
+            delete (reports[reviewee]);
+        } else {
+            report.confirmedBy = reviewer;
         }
 
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[reviewer];
         insurance.numberOfJudgements++;
         if (insurance.numberOfJudgements >= 5) {
             insurance.numberOfJudgements = 0;
@@ -138,19 +153,17 @@ abstract contract DamageReport is GasInsurance {
         }
     }
 
-    function refuseReport(address _address)
+    function refuseReport(address reviewer, address reviewee)
         external
-        ownsInsurance(_address)
-        reportExists(_address)
-        ownsInsurance(msg.sender)
-        canJudge(msg.sender)
+        ownsInsurance(reviewee)
+        reportExists(reviewee)
+        ownsInsurance(reviewer)
+        canJudge(reviewer)
     {
-
         // TODO: what to do if someone refuses a report?
-
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[reviewer];
         insurance.numberOfJudgements++;
-        _mint(msg.sender, 1);
+        _mint(reviewer, 1);
         if (insurance.numberOfJudgements >= 5) {
             insurance.numberOfJudgements = 0;
             insurance.judgementCooldown = block.timestamp + judgementCoold;
@@ -167,14 +180,16 @@ abstract contract DamageReport is GasInsurance {
         emit CompensationPayment(_address, report.compensationPrice);
     }
 
-    /*function getRandomDamagePicture() external view returns (address, bytes memory) {
-        uint randomIndex = uint(keccak256(abi.encodePacked(block.timestamp))) % report_keys.length;
-        address randomAddress = report_keys[randomIndex];
+    function getRandomDamagePicture() external view returns (address, string memory) {
+        require(activeReports > 0, "No active damage reports.");
+        address randomAddress = address(0);
+        uint randNonce = 1;
         while (randomAddress == address(0)) {
-            randomIndex = uint(keccak256(abi.encodePacked(block.timestamp))) % report_keys.length;
+            uint randomIndex = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % report_keys.length;
+            randNonce++;
             randomAddress = report_keys[randomIndex];
         }
         
         return (randomAddress, reports[randomAddress].pictureIpfsHash);
-    }*/
+    }
 }

@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:dart_web3/dart_web3.dart';
+import 'package:formula/config/env.dart';
+import 'package:formula/service/authService.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,6 +15,7 @@ import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
 import 'package:get/get.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class DeclareDamagePage extends StatefulWidget {
   const DeclareDamagePage({Key? key}) : super(key: key);
@@ -228,7 +232,7 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
                         ),
                         Expanded(
                           child: AutoSizeText(
-                            "If your demand is real, the compensation will be transfered to your eHUF account.",
+                            "If your demand is valid, the compensation will be transfered to your eHUF account.",
                             maxLines: 3,
                             style: TextStyle(
                                 fontSize: 17,
@@ -271,7 +275,7 @@ class DeclareDamageController extends GetxController {
   String totalDamage = "";
   File? reportFile;
   File? pictureFile;
-  List<int>? reportFileBytes;
+  String? reportIpfsPath, pictureIpfsPath;
 
   final FormControl totalDamageControl =
       FormControl<String>(validators: [Validators.required, Validators.number]);
@@ -288,10 +292,7 @@ class DeclareDamageController extends GetxController {
       allowedExtensions: ['pdf', 'docx', 'xlsx'],
     );
     if (result != null) {
-      print(result.files.last);
       reportFile = File(result.files.last.path!);
-      print("file: $reportFile");
-      reportFileBytes = await reportFile!.readAsBytes();
       update();
     } else {
       print('cancelled');
@@ -304,10 +305,7 @@ class DeclareDamageController extends GetxController {
       allowedExtensions: ['jpg', 'png', 'jpeg', 'gif'],
     );
     if (result != null) {
-      print(result.files.last);
       pictureFile = File(result.files.last.path!);
-      print("file: $pictureFile");
-      reportFileBytes = await pictureFile!.readAsBytes();
       update();
     } else {
       print('cancelled');
@@ -325,13 +323,27 @@ class DeclareDamageController extends GetxController {
   }
 
   Future<void> submit(BuildContext context) async {
-    if (reportFile != null || pictureFile != null) {
+    if (reportFile != null && pictureFile != null && totalDamageControl.valid) {
       var str = await shareReportOnIpfs();
       await sharePictureOnIpfs(str);
-      Get.toNamed('/overview');
+      final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+      );
+
+      await launchUrlString("https://metamask.app.link/",
+          mode: LaunchMode.externalApplication);
+
+      await AuthenticationService.instance.contract!
+          .declareDamage(
+              AuthenticationService.instance.account!, pictureIpfsPath!, reportIpfsPath!, BigInt.from(int.parse(totalDamageControl.value)),
+              credentials: AuthenticationService.instance.credentials!,
+              transaction: transaction);
+      BottomNavBar.toOverview();
     } else {
       const snackBar = SnackBar(
-          content: Text("You have to upload both files.", style: TextStyle(fontSize: 20)),
+          content: Text("Please fill all fields.", style: TextStyle(fontSize: 20)),
           backgroundColor: Colors.red,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -349,7 +361,7 @@ class DeclareDamageController extends GetxController {
         filename: pictureFile!.path.split('/').last));
     var res = await request.send();
     final resBody = await res.stream.bytesToString();
-    print(jsonDecode(resBody)["path"]);
+    pictureIpfsPath = jsonDecode(resBody)['path'];
   }
 
   Future<String> shareReportOnIpfs() async {
@@ -363,7 +375,7 @@ class DeclareDamageController extends GetxController {
         filename: reportFile!.path.split('/').last));
     var res = await request.send();
     final resBody = await res.stream.bytesToString();
-    print(jsonDecode(resBody)["path"]);
+    reportIpfsPath = jsonDecode(resBody)['path'];
     return contractString;
   }
 

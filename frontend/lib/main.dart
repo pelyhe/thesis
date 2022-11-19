@@ -7,7 +7,6 @@ import 'package:formula/general/route.dart';
 import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
 import 'package:formula/localization/localization.dart';
-
 import 'general/themes.dart';
 
 void main() {
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
           translations: Languages(),
           locale: Get.deviceLocale,
           fallbackLocale: const Locale('en', 'US'),
-          initialRoute: 'splash',
+          initialRoute: 'connect',
           getPages: AppRoutes.pages),
     );
   }

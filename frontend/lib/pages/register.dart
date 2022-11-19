@@ -1,5 +1,9 @@
 import 'dart:io';
-
+import 'dart:math';
+import 'package:dart_web3/dart_web3.dart';
+import 'package:formula/config/env.dart';
+import 'package:formula/service/authService.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,13 +13,8 @@ import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
 import 'package:formula/pages/loading.dart';
 import 'package:get/get.dart';
-import 'package:trinsic_dart/trinsic.dart';
-import 'package:trinsic_dart/src/trinsic_service.dart';
-import 'package:trinsic_dart/src/trinsic_util.dart';
-import 'package:trinsic_dart/src/proto/services/universal-wallet/v1/universal-wallet.pbgrpc.dart';
-import 'package:trinsic_dart/src/proto/services/verifiable-credentials/v1/verifiable-credentials.pbgrpc.dart';
-import 'package:trinsic_dart/src/proto/services/account/v1/account.pbgrpc.dart';
-import 'package:trinsic_dart/src/proto/services/provider/v1/provider.pbgrpc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -30,29 +29,21 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return FutureBuilder(
-        future: controller.setupTrinsic(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingPage();
-          } else {
-            return GetBuilder<RegisterPageController>(
-                init: controller,
-                builder: (controller) {
-                  return Scaffold(
-                    appBar: AppBar(
-                      backgroundColor: AppColors.orange,
-                      title: const Text('Gas Insurance'),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    body: scaffoldBody(
-                      context: context,
-                      mobileBody: mobileBody(),
-                      tabletBody: mobileBody(),
-                    ),
-                  );
-                });
-          }
+    return GetBuilder<RegisterPageController>(
+        init: controller,
+        builder: (controller) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: AppColors.orange,
+              title: const Text('Gas Insurance'),
+            ),
+            backgroundColor: Colors.transparent,
+            body: scaffoldBody(
+              context: context,
+              mobileBody: mobileBody(),
+              tabletBody: mobileBody(),
+            ),
+          );
         });
   }
 
@@ -93,42 +84,100 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 25),
-
-              // ***************************************************************
-              //        THIS IS THE RELEVANT VERIFY CREDENTIALS BUTTON
-              // ***************************************************************
-
-              OutlinedButton(
-                onPressed: controller.verifyVC,
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0))),
-                  side: MaterialStateProperty.all(BorderSide(
-                      color: AppColors.navigationColor,
-                      width: 1.5,
-                      style: BorderStyle.solid)),
-                  minimumSize:
-                      MaterialStateProperty.all<Size>(const Size(150, 35)),
-                  maximumSize:
-                      MaterialStateProperty.all<Size>(const Size(175, 35)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle_outline,
-                        color: AppColors.navigationColor, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Verify credentials",
-                      style: TextStyle(
-                          color: AppColors.navigationColor, fontSize: 16),
+              Row(
+                children: [
+                  OutlinedButton(
+                    onPressed: controller.pickFrontside,
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0))),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: AppColors.navigationColor,
+                          width: 1.5,
+                          style: BorderStyle.solid)),
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(165, 35)),
+                      maximumSize:
+                          MaterialStateProperty.all<Size>(const Size(180, 35)),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.perm_identity,
+                            color: AppColors.navigationColor, size: 16),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Front side of your ID",
+                          style: TextStyle(
+                              color: AppColors.navigationColor, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  if (controller.frontside != null)
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: Text(
+                                  controller.frontside!.path.split('/').last)),
+                          IconButton(
+                              onPressed: controller.deleteFrontside,
+                              icon: const Icon(Icons.delete))
+                        ],
+                      ),
+                    )
+                ],
               ),
-
-              // ***************************************************************
-              // ***************************************************************
-
+              Row(
+                children: [
+                  OutlinedButton(
+                    onPressed: controller.pickBackside,
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0))),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: AppColors.navigationColor,
+                          width: 1.5,
+                          style: BorderStyle.solid)),
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(165, 35)),
+                      maximumSize:
+                          MaterialStateProperty.all<Size>(const Size(180, 35)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.perm_identity,
+                            color: AppColors.navigationColor, size: 16),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Back side of your ID",
+                          style: TextStyle(
+                              color: AppColors.navigationColor, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  if (controller.backside != null)
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: Text(
+                                  controller.backside!.path.split('/').last)),
+                          IconButton(
+                              onPressed: controller.deleteBackside,
+                              icon: const Icon(Icons.delete))
+                        ],
+                      ),
+                    )
+                ],
+              ),
               const SizedBox(height: 40),
               Text(
                 "Choose your plan",
@@ -164,8 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {
                         // call smart contract takeOutInsurance() function, then
                         // return to home page
-                        print('OK.');
-                        Get.toNamed("/");
+                        controller.submit(context);
                       },
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
@@ -267,52 +315,116 @@ class _RegisterPageState extends State<RegisterPage> {
 
 class RegisterPageController extends GetxController {
   int plan = 1;
-  TrinsicService? trinsic;
   String? insuranceCompany;
+  File? frontside, backside;
 
-
-  setupTrinsic() async {
-    /*var trinsic = TrinsicService(trinsicConfig(), null);
-
-    var ecosystem = await trinsic.provider().createEcosystem();
-    var ecosystemId = ecosystem.ecosystem.id;
-
-    //var allison = await trinsic.account().signIn();
-    //var clinic = await trinsic.account().signIn();
-    var insuranceCompany = await trinsic.account().signIn();
-
-    trinsic.serviceOptions.authToken = insuranceCompany;
-
-    var templateData = File(path.join(path.current, "..", "trinsic-config", "templateData.json"));
-    var credentialJson = await templateData.readAsString();
-    
-     var insertResponse = await trinsic
-      .wallet().searchWallet();
-
-    var proofResponse = await trinsic.credential().createProof(
-        CreateProofRequest(
-            revealDocumentJson: proofRequestJson, itemId: itemId));
-    var credentialProof = proofResponse.proofDocumentJson;
-    print("Proof: $credentialProof");
-
-    trinsic.serviceOptions.authToken = airline;
-
-    var verifyResult = await trinsic
-        .credential()
-        .verifyProof(VerifyProofRequest(proofDocumentJson: credentialProof));
-
-    print("Verification result: $verifyResult");
-    assert(verifyResult.validationResults["SignatureVerification"]?.isValid ??
-        false);
-*/
+  void pickFrontside() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'gif'],
+    );
+    if (result != null) {
+      frontside = File(result.files.last.path!);
+      update();
+    } else {
+      print('cancelled');
+    }
   }
 
-  createProof() async {}
-
-  verifyVC() {}
+  void pickBackside() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'gif'],
+    );
+    if (result != null) {
+      backside = File(result.files.last.path!);
+      update();
+    } else {
+      print('cancelled');
+    }
+  }
 
   setPlan(int p) {
     plan = p;
     update();
+  }
+
+  void deleteFrontside() {
+    frontside = null;
+    update();
+  }
+
+  void deleteBackside() {
+    backside = null;
+    update();
+  }
+
+  Future<void> submit(BuildContext context) async {
+    if (frontside != null && backside != null) {
+      var str = await shareFrontsideOnIpfs();
+      await shareBacksideOnIpfs(str);
+      takeOutInsurance();
+      BottomNavBar.toOverview();
+    } else {
+      const snackBar = SnackBar(
+        content: Text("You have to upload both files.",
+            style: TextStyle(fontSize: 20)),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void takeOutInsurance() async {
+    final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+    );
+
+    await launchUrlString("https://metamask.app.link/",
+        mode: LaunchMode.externalApplication);
+
+    await AuthenticationService.instance.contract!
+        .takeOutInsurance(
+            AuthenticationService.instance.account!, BigInt.from(plan),
+            credentials: AuthenticationService.instance.credentials!,
+            transaction: transaction);
+
+    BottomNavBar.toOverview();
+  }
+
+  shareFrontsideOnIpfs() async {
+    final contractString = getRandomString(20);
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            "http://vm.niif.cloud.bme.hu:14434/storeFile?id=$contractString"));
+    request.files.add(http.MultipartFile(
+        'file', frontside!.readAsBytes().asStream(), frontside!.lengthSync(),
+        filename: frontside!.path.split('/').last));
+    await request.send();
+    return contractString;
+  }
+
+  shareBacksideOnIpfs(String contractString) async {
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            "http://vm.niif.cloud.bme.hu:14434/storeFile?id=$contractString"));
+    request.files.add(http.MultipartFile(
+        'file', backside!.readAsBytes().asStream(), backside!.lengthSync(),
+        filename: backside!.path.split('/').last));
+    var res = await request.send();
+    final resBody = await res.stream.bytesToString();
+  }
+
+  String getRandomString(int length) {
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    Random _rnd = Random.secure();
+
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
   }
 }

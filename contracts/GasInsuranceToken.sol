@@ -2,7 +2,7 @@
 /// @author Pelyhe Ádám - BME - MIT
 pragma solidity ^0.8.7;
 
-import "./DamageReportContract.sol";
+import "./DamageReport.sol";
 
 contract GasInsuranceToken is DamageReport{
     constructor() ERC20("Gas Insurance Token", "GIT") {
@@ -28,14 +28,14 @@ contract GasInsuranceToken is DamageReport{
         return (remainingDays + 1) * diff;
     }
 
-    function changeToHigherPlan(uint8 _planNumber)
+    function changeToHigherPlan(address _address, uint8 _planNumber)
         internal
-        ownsInsurance(msg.sender)
+        ownsInsurance(_address)
     {
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[_address];
         Plan memory newPlan = createPlan(_planNumber);
         uint32 diff = newPlan.monthlyFee - insurance.plan.monthlyFee;
-        emit SwitchHigherPlan(msg.sender, diff);
+        emit SwitchHigherPlan(_address, diff);
         
         // if result OK
         insurance.plan = newPlan;
@@ -48,39 +48,39 @@ contract GasInsuranceToken is DamageReport{
     // and the plan will be changed immediately,
     // thus the remaining days from the epoch will be converted to utility tokens
     // depending on the previous plan
-    function changetoLowerPlan(uint8 _planNumber)
+    function changetoLowerPlan(address _address, uint8 _planNumber)
         internal
-        ownsInsurance(msg.sender)
+        ownsInsurance(_address)
     {
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[_address];
         Plan memory newPlan = createPlan(_planNumber);
         uint256 tokens = convertPlanToTokens(insurance, _planNumber);
-        emit SwitchLowerPlan(msg.sender, tokens);
+        emit SwitchLowerPlan(_address, tokens);
 
         // if results OK
         insurance.plan = newPlan;
         insurance.nextPayment = block.timestamp + paymentFrequency;
         insurance.suspendDate = insurance.nextPayment + gracePeriod;
-        _mint(msg.sender, tokens);
+        _mint(_address, tokens);
     }
 
-    function changePlan(uint8 _plan)
+    function changePlan(address _address, uint8 _plan)
         public
-        ownsInsurance(msg.sender)
+        ownsInsurance(_address)
         isPlanValid(_plan)
-        planNotTheSame(msg.sender, _plan)
+        planNotTheSame(_address, _plan)
     {
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[_address];
         if (insurance.nextPayment > block.timestamp) {  // in the previous epoch
             if (_plan > insurance.plan.planNumber) {
-                changeToHigherPlan(_plan);
+                changeToHigherPlan(_address, _plan);
             } else {
-                changetoLowerPlan(_plan);
+                changetoLowerPlan(_address, _plan);
             }
         } else {
             Plan memory newPlan = createPlan(_plan);
             insurance.plan = newPlan;
-            payMonthlyFee();
+            payMonthlyFee(_address);
         }
     }
 }

@@ -92,6 +92,10 @@ abstract contract GasInsurance is Ownable, ERC20 {
         return false;
     }
 
+    function getPlan(address _address) external view ownsInsurance(_address) returns (uint8)  {
+        return insurances[_address].plan.planNumber;
+    }
+
 
     // checks if the insurance status is active or suspended
     function isInsuranceActive(address _address)
@@ -142,13 +146,13 @@ abstract contract GasInsurance is Ownable, ERC20 {
     }
 
     // user takes out an insurance
-    function takeOutInsurance(uint8 _plan)
+    function takeOutInsurance(address _address, uint8 _plan)
         external
         isPlanValid(_plan)
-        notOwnInsurance(msg.sender)
+        notOwnInsurance(_address)
     {
         uint256 suspendDate = block.timestamp + gracePeriod;
-        insurances[msg.sender] = Insurance(
+        insurances[_address] = Insurance(
             nextInsuranceId,    // id
             false,      // isActive
             createPlan(_plan),  // plan
@@ -158,7 +162,7 @@ abstract contract GasInsurance is Ownable, ERC20 {
             0   // number of judges
         );
         nextInsuranceId++;
-        payMonthlyFee();
+        payMonthlyFee(_address);
     }
 
     function getNextPaymentDate(address _address)
@@ -180,14 +184,15 @@ abstract contract GasInsurance is Ownable, ERC20 {
     }
 
     // msg.sender wants to pay the monthly fee
-    function payMonthlyFee()
+    function payMonthlyFee(address _address)
         public
-        ownsInsurance(msg.sender)
-        isPaymentDue(msg.sender)
+        ownsInsurance(_address)
+        isPaymentDue(_address)
     {
-        Insurance storage insurance = insurances[msg.sender];
+        Insurance storage insurance = insurances[_address];
 
-        emit MontlyFeePayment(msg.sender, insurance.plan.monthlyFee); 
+        // TODO: value is undefined 
+        emit MontlyFeePayment(_address, insurance.plan.monthlyFee); 
 
         // TODO: event handler tries to pay fee through payment gw.,
         // if successful, calls confirmPayment() which will be a function

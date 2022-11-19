@@ -1,12 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:formula/components/bottomNavBar.dart';
 import 'package:formula/components/resignPopup.dart';
+import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
+import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+import 'loading.dart';
 
 class OverviewPage extends StatefulWidget {
   const OverviewPage({Key? key}) : super(key: key);
@@ -21,21 +27,29 @@ class _OverviewPageState extends State<OverviewPage> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return GetBuilder<OverviewController>(
-        init: controller,
-        builder: (controller) {
-          return Scaffold(
-              appBar: AppBar(
-                backgroundColor: AppColors.orange,
-                title: const Text('Gas Insurance'),
-              ),
-              backgroundColor: Colors.transparent,
-              body: scaffoldBody(
-                context: context,
-                mobileBody: mobileBody(),
-                tabletBody: mobileBody(),
-              ),
-              bottomNavigationBar: const BottomNavBar());
+    return FutureBuilder(
+        future: controller.init(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingPage();
+          } else {
+            return GetBuilder<OverviewController>(
+                init: controller,
+                builder: (controller) {
+                  return Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: AppColors.orange,
+                        title: const Text('Gas Insurance'),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      body: scaffoldBody(
+                        context: context,
+                        mobileBody: mobileBody(),
+                        tabletBody: mobileBody(),
+                      ),
+                      bottomNavigationBar: const BottomNavBar());
+                });
+          }
         });
   }
 
@@ -91,8 +105,8 @@ class _OverviewPageState extends State<OverviewPage> {
           children: [
             Image.asset(
               "assets/images/git.png",
-              width: 20, 
-              height: 20, 
+              width: 20,
+              height: 20,
             ),
             const SizedBox(
               width: 10,
@@ -102,7 +116,9 @@ class _OverviewPageState extends State<OverviewPage> {
                 "${controller.gitTokens} GIT tokens",
                 maxLines: 1,
                 style: const TextStyle(
-                    fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
               ),
             )
           ],
@@ -157,28 +173,6 @@ class _OverviewPageState extends State<OverviewPage> {
                 child: Center(
                   child: OutlinedButton(
                     onPressed: () {
-                      /*Widget cancelButton = TextButton(
-                        child: const Text("Cancel"),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // dismiss dialog
-                        },
-                      );
-                      Widget continueButton = TextButton(
-                        child: const Text("Resign"),
-                        onPressed: () {
-                          // TODO: call resign
-                        },
-                      );
-
-                      AlertDialog alert = AlertDialog(
-                        title: const Text("Resign insurance"),
-                        content: const Text(
-                            "Are you sure want to resign your gas insurance?"),
-                        actions: [
-                          cancelButton,
-                          continueButton,
-                        ],
-                      );*/
                       showDialog(
                           context: context,
                           builder: (BuildContext ctx) => ResignPopup());
@@ -213,10 +207,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10),
                 child: Center(
                   child: OutlinedButton(
-                    onPressed: () {
-                      // call payMonthlyFee sm function
-                      print("pay monthly fee");
-                    },
+                    onPressed: controller.payMonthlyFee,
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0))),
@@ -384,4 +375,38 @@ class OverviewController extends GetxController {
   int currentPlan = 2;
   int daysLeft = 12; // getNextPayment - now() in unix time
   int gitTokens = 9;
+
+  init() async {
+    isInsuranceValid = await AuthenticationService.instance.contract!
+        .isInsuranceActive(AuthenticationService.instance.account!);
+    BigInt currentPlanResult = await AuthenticationService.instance.contract!
+        .getPlan(AuthenticationService.instance.account!);
+    currentPlan = currentPlanResult.toInt();
+    BigInt nextPaymentResult = await AuthenticationService.instance.contract!
+        .getNextPaymentDate(AuthenticationService.instance.account!);
+    DateTime nextPaymentDate =
+        DateTime.fromMicrosecondsSinceEpoch(nextPaymentResult.toInt());
+    daysLeft = nextPaymentDate.difference(DateTime.now()).inDays;
+    BigInt gitTokensResult = await AuthenticationService.instance.contract!
+        .balanceOf(AuthenticationService.instance.account!);
+    gitTokens = gitTokensResult.toInt();
+  }
+
+  payMonthlyFee() async {
+    final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+    );
+
+    await launchUrlString("https://metamask.app.link/",
+        mode: LaunchMode.externalApplication);
+
+    await AuthenticationService.instance.contract!.payMonthlyFee(
+        AuthenticationService.instance.account!,
+        credentials: AuthenticationService.instance.credentials!,
+        transaction: transaction);
+
+
+  }
 }
