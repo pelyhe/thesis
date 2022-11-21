@@ -2,7 +2,6 @@ const http = require('http');
 const Web3 = require('web3');
 const environment = require('./config/environment.js');
 const insuranceTokenABI = require('./config/insuranceTokenABI.js');
-const { Alchemy, Network, Wallet, Utils } = require("alchemy-sdk");
 const ethers = require('ethers');
 const axios = require('axios');
 
