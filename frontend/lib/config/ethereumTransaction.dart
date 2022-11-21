@@ -6,6 +6,8 @@ import 'package:formula/config/transactionTester.dart';
 import 'package:http/http.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
+
+// source: https://github.com/RootSoft/walletconnect-dart-sdk/blob/master/example/mobile/lib/ethereum_transaction_tester.dart
 class WalletConnectEthereumCredentials extends CustomTransactionSender {
   WalletConnectEthereumCredentials({required this.provider});
 

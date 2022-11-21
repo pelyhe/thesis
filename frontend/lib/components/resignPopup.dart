@@ -1,6 +1,14 @@
+import 'dart:async';
+
+import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:formula/config/env.dart';
+import 'package:formula/pages/error.dart';
+import 'package:formula/service/authService.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ResignPopup extends StatelessWidget {
   const ResignPopup({Key? key}) : super(key: key);
@@ -16,9 +24,7 @@ class ResignPopup extends StatelessWidget {
     );
     Widget continueButton = TextButton(
       child: const Text("Resign"),
-      onPressed:  () {
-        // TODO: call resign
-      },
+      onPressed:  () => resignInsurance(context)
     );
 
     AlertDialog alert = AlertDialog(
@@ -31,5 +37,26 @@ class ResignPopup extends StatelessWidget {
     );
 
     return alert;
+  }
+
+  resignInsurance(BuildContext context) async {
+    final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+    );
+
+    await launchUrlString("https://metamask.app.link/",
+        mode: LaunchMode.externalApplication);
+
+    try {
+      await AuthenticationService.instance.contract!.resignInsurance(
+          credentials: AuthenticationService.instance.credentials!,
+          transaction: transaction);
+    } catch (error) {
+      Get.to(ErrorScreen(errorDetails: error.toString()));
+    }
+    Navigator.of(context).pop(); // dismiss dialog
+    Timer(const Duration(seconds: 2), () => Get.toNamed('/register'));
   }
 }

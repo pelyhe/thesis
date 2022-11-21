@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:dart_web3/dart_web3.dart';
+import 'package:formula/components/declareDamagePopup.dart';
 import 'package:formula/config/env.dart';
+import 'package:formula/pages/error.dart';
+import 'package:formula/pages/loading.dart';
 import 'package:formula/service/authService.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
@@ -26,25 +30,40 @@ class DeclareDamagePage extends StatefulWidget {
 
 class _DeclareDamagePageState extends State<DeclareDamagePage> {
   final controller = DeclareDamageController();
+  Future? initialize;
+
+  @override
+  void initState() {
+    super.initState();
+    initialize = controller.init();
+  }
 
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return GetBuilder<DeclareDamageController>(
-        init: controller,
-        builder: (controller) {
-          return Scaffold(
-              appBar: AppBar(
-                backgroundColor: AppColors.orange,
-                title: const Text('Gas Insurance'),
-              ),
-              backgroundColor: Colors.transparent,
-              body: scaffoldBody(
-                context: context,
-                mobileBody: mobileBody(),
-                tabletBody: mobileBody(),
-              ),
-              bottomNavigationBar: const BottomNavBar());
+    return FutureBuilder(
+        future: initialize,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingPage();
+          } else {
+            return GetBuilder<DeclareDamageController>(
+                init: controller,
+                builder: (controller) {
+                  return Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: AppColors.orange,
+                        title: const Text('Gas Insurance'),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      body: scaffoldBody(
+                        context: context,
+                        mobileBody: mobileBody(),
+                        tabletBody: mobileBody(),
+                      ),
+                      bottomNavigationBar: const BottomNavBar());
+                });
+          }
         });
   }
 
@@ -124,8 +143,9 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Text(
-                                      controller.reportFile!.path.split('/').last)),
+                                  child: Text(controller.reportFile!.path
+                                      .split('/')
+                                      .last)),
                               IconButton(
                                   onPressed: controller.deleteReportFile,
                                   icon: const Icon(Icons.delete))
@@ -193,8 +213,9 @@ class _DeclareDamagePageState extends State<DeclareDamagePage> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Text(
-                                      controller.pictureFile!.path.split('/').last)),
+                                  child: Text(controller.pictureFile!.path
+                                      .split('/')
+                                      .last)),
                               IconButton(
                                   onPressed: controller.deletePictureFile,
                                   icon: const Icon(Icons.delete))
@@ -276,6 +297,7 @@ class DeclareDamageController extends GetxController {
   File? reportFile;
   File? pictureFile;
   String? reportIpfsPath, pictureIpfsPath;
+  int? numberOfTokens;
 
   final FormControl totalDamageControl =
       FormControl<String>(validators: [Validators.required, Validators.number]);
@@ -299,7 +321,7 @@ class DeclareDamageController extends GetxController {
     }
   }
 
-    void pickPicture() async {
+  void pickPicture() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png', 'jpeg', 'gif'],
@@ -322,33 +344,58 @@ class DeclareDamageController extends GetxController {
     update();
   }
 
+  init() async {
+    BigInt gitTokensResult = await AuthenticationService.instance.contract!
+        .balanceOf(AuthenticationService.instance.account!);
+    numberOfTokens = gitTokensResult.toInt();
+  }
+
+  declareWithoutToken() async {
+    final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+    );
+
+    await launchUrlString("https://metamask.app.link/",
+        mode: LaunchMode.externalApplication);
+
+    try {
+      await AuthenticationService.instance.contract!.declareDamage(
+          AuthenticationService.instance.account!,
+          pictureIpfsPath!,
+          reportIpfsPath!,
+          BigInt.from(int.parse(totalDamageControl.value)),
+          credentials: AuthenticationService.instance.credentials!,
+          transaction: transaction);
+    } catch (error) {
+      Get.to(ErrorScreen(errorDetails: error.toString()));
+    }
+
+    Timer(const Duration(seconds: 2), () => Get.toNamed('/splash'));
+  }
+
   Future<void> submit(BuildContext context) async {
     if (reportFile != null && pictureFile != null && totalDamageControl.valid) {
       var str = await shareReportOnIpfs();
       await sharePictureOnIpfs(str);
-      final transaction = Transaction(
-      to: Environment.contractAddress,
-      from: AuthenticationService.instance.account,
-      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
-      );
-
-      await launchUrlString("https://metamask.app.link/",
-          mode: LaunchMode.externalApplication);
-
-      await AuthenticationService.instance.contract!
-          .declareDamage(
-              AuthenticationService.instance.account!, pictureIpfsPath!, reportIpfsPath!, BigInt.from(int.parse(totalDamageControl.value)),
-              credentials: AuthenticationService.instance.credentials!,
-              transaction: transaction);
-      BottomNavBar.toOverview();
+      numberOfTokens == 0 ? 
+      declareWithoutToken() :
+      showDialog(
+          context: context,
+          builder: (BuildContext ctx) => DeclareDamagePopup(
+              numOfTokens: numberOfTokens!,
+              pictureIpfsHash: pictureIpfsPath!,
+              reportIpfsHash: reportIpfsPath!,
+              totalDamage: BigInt.from(int.parse(totalDamageControl.value))));
     } else {
       const snackBar = SnackBar(
-          content: Text("Please fill all fields.", style: TextStyle(fontSize: 20)),
-          backgroundColor: Colors.red,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        content:
+            Text("Please fill all fields.", style: TextStyle(fontSize: 20)),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-
   }
 
   Future<void> sharePictureOnIpfs(contractString) async {
@@ -356,8 +403,8 @@ class DeclareDamageController extends GetxController {
         'POST',
         Uri.parse(
             "http://vm.niif.cloud.bme.hu:14434/storeFile?id=$contractString"));
-    request.files.add(http.MultipartFile(
-        'file', pictureFile!.readAsBytes().asStream(), pictureFile!.lengthSync(),
+    request.files.add(http.MultipartFile('file',
+        pictureFile!.readAsBytes().asStream(), pictureFile!.lengthSync(),
         filename: pictureFile!.path.split('/').last));
     var res = await request.send();
     final resBody = await res.stream.bytesToString();

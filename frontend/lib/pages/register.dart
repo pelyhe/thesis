@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:dart_web3/dart_web3.dart';
 import 'package:formula/config/env.dart';
+import 'package:formula/pages/error.dart';
 import 'package:formula/service/authService.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -364,7 +366,6 @@ class RegisterPageController extends GetxController {
       var str = await shareFrontsideOnIpfs();
       await shareBacksideOnIpfs(str);
       takeOutInsurance();
-      BottomNavBar.toOverview();
     } else {
       const snackBar = SnackBar(
         content: Text("You have to upload both files.",
@@ -385,13 +386,18 @@ class RegisterPageController extends GetxController {
     await launchUrlString("https://metamask.app.link/",
         mode: LaunchMode.externalApplication);
 
-    await AuthenticationService.instance.contract!
-        .takeOutInsurance(
-            AuthenticationService.instance.account!, BigInt.from(plan),
-            credentials: AuthenticationService.instance.credentials!,
-            transaction: transaction);
-
-    BottomNavBar.toOverview();
+    try {
+      await AuthenticationService.instance.contract!
+          .takeOutInsurance(
+              AuthenticationService.instance.account!, BigInt.from(plan),
+              credentials: AuthenticationService.instance.credentials!,
+              transaction: transaction);
+    } catch (error) {
+      Get.to(ErrorScreen(errorDetails: error.toString()));
+    }
+    
+    Timer(const Duration(seconds: 5), BottomNavBar.toOverview);
+    
   }
 
   shareFrontsideOnIpfs() async {

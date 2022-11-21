@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:formula/config/GasInsurance.g.dart';
 import 'package:formula/config/ethereumTransaction.dart';
 import 'package:http/http.dart' as http;
@@ -116,7 +118,7 @@ class ConnectWalletController extends GetxController {
     AuthenticationService.instance.account =
         EthereumAddress.fromHex(AuthenticationService.instance.session!.accounts[0]);
 
-    // TODO: https://github.com/MetaMask/metamask-mobile/issues/3735
+    // https://github.com/MetaMask/metamask-mobile/issues/3735
     if (AuthenticationService.instance.account != null) {
       final client = Web3Client(Environment.provider, http.Client());
       EthereumWalletConnectProvider provider =

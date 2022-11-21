@@ -4,7 +4,7 @@
 import 'package:dart_web3/dart_web3.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
-  '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"approveReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint8","name":"_plan","type":"uint8"}],"name":"changePlan","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"damagePrice","type":"uint256"}],"name":"CompensationPayment","type":"event"},{"inputs":[{"internalType":"address","name":"reviewer","type":"address"},{"internalType":"address","name":"reviewee","type":"address"}],"name":"confirmReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"},{"components":[{"internalType":"uint32","name":"id","type":"uint32"},{"internalType":"string","name":"pictureIpfsHash","type":"string"},{"internalType":"string","name":"documentIpfsHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"},{"internalType":"uint32","name":"compensationPrice","type":"uint32"},{"internalType":"uint8","name":"numberOfConfirmations","type":"uint8"},{"internalType":"address","name":"confirmedBy","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"indexed":false,"internalType":"struct DamageReport.Report","name":"report","type":"tuple"}],"name":"DamageDeclaration","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"string","name":"pictureHash","type":"string"},{"internalType":"string","name":"documentHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"}],"name":"declareDamage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"_value","type":"uint256"}],"name":"MontlyFeePayment","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"payCompensation","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"payMonthlyFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"reviewer","type":"address"},{"internalType":"address","name":"reviewee","type":"address"}],"name":"refuseReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"setDamageReportContract","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"suspendClient","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint32","name":"feeDifference","type":"uint32"}],"name":"SwitchHigherPlan","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"utilityTokens","type":"uint256"}],"name":"SwitchLowerPlan","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint8","name":"_plan","type":"uint8"}],"name":"takeOutInsurance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getMonthlyFee","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getNextPaymentDate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getPlan","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRandomDamagePicture","outputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"hasInsurance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"hasReport","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"isInsuranceActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]',
+  '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"approveReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint8","name":"_plan","type":"uint8"}],"name":"changePlan","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"}],"name":"ClientSuspended","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"damagePrice","type":"uint256"}],"name":"CompensationPayment","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint8","name":"_planNumber","type":"uint8"},{"internalType":"uint32","name":"diff","type":"uint32"}],"name":"confirmHigherPlanSwitchPayment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint256","name":"_value","type":"uint256"}],"name":"confirmMonthlyFeePayment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"_value","type":"uint256"}],"name":"ConfirmPayment","type":"event"},{"inputs":[{"internalType":"address","name":"reviewer","type":"address"},{"internalType":"address","name":"reviewee","type":"address"}],"name":"confirmReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"},{"components":[{"internalType":"uint32","name":"id","type":"uint32"},{"internalType":"string","name":"pictureIpfsHash","type":"string"},{"internalType":"string","name":"documentIpfsHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"},{"internalType":"uint32","name":"compensationPrice","type":"uint32"},{"internalType":"uint8","name":"numberOfConfirmations","type":"uint8"},{"internalType":"address","name":"confirmedBy","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"indexed":false,"internalType":"struct DamageReport.Report","name":"report","type":"tuple"}],"name":"DamageDeclaration","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"string","name":"pictureHash","type":"string"},{"internalType":"string","name":"documentHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"}],"name":"declareDamage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"string","name":"pictureHash","type":"string"},{"internalType":"string","name":"documentHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"}],"name":"declareDamageWithTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"},{"components":[{"internalType":"uint8","name":"planNumber","type":"uint8"},{"internalType":"uint32","name":"monthlyFee","type":"uint32"},{"internalType":"uint8","name":"compensationPercentage","type":"uint8"}],"indexed":false,"internalType":"struct GasInsurance.Plan","name":"plan","type":"tuple"}],"name":"InsuranceRegistration","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"_address","type":"address"}],"name":"InsuranceResigned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"_value","type":"uint256"}],"name":"MontlyFeePayment","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"payCompensation","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"payMonthlyFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"reviewer","type":"address"},{"internalType":"address","name":"reviewee","type":"address"}],"name":"refuseReport","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"components":[{"internalType":"uint32","name":"id","type":"uint32"},{"internalType":"string","name":"pictureIpfsHash","type":"string"},{"internalType":"string","name":"documentIpfsHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"},{"internalType":"uint32","name":"compensationPrice","type":"uint32"},{"internalType":"uint8","name":"numberOfConfirmations","type":"uint8"},{"internalType":"address","name":"confirmedBy","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"indexed":false,"internalType":"struct DamageReport.Report","name":"report","type":"tuple"}],"name":"ReportApproved","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"reviewer","type":"address"},{"components":[{"internalType":"uint32","name":"id","type":"uint32"},{"internalType":"string","name":"pictureIpfsHash","type":"string"},{"internalType":"string","name":"documentIpfsHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"},{"internalType":"uint32","name":"compensationPrice","type":"uint32"},{"internalType":"uint8","name":"numberOfConfirmations","type":"uint8"},{"internalType":"address","name":"confirmedBy","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"indexed":false,"internalType":"struct DamageReport.Report","name":"report","type":"tuple"}],"name":"ReportConfirmed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"reviewer","type":"address"},{"components":[{"internalType":"uint32","name":"id","type":"uint32"},{"internalType":"string","name":"pictureIpfsHash","type":"string"},{"internalType":"string","name":"documentIpfsHash","type":"string"},{"internalType":"uint32","name":"damagePrice","type":"uint32"},{"internalType":"uint32","name":"compensationPrice","type":"uint32"},{"internalType":"uint8","name":"numberOfConfirmations","type":"uint8"},{"internalType":"address","name":"confirmedBy","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"indexed":false,"internalType":"struct DamageReport.Report","name":"report","type":"tuple"}],"name":"ReportRefused","type":"event"},{"inputs":[],"name":"resignInsurance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"setGatewayAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"suspendClient","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint8","name":"planNumber","type":"uint8"},{"indexed":false,"internalType":"uint32","name":"feeDifference","type":"uint32"}],"name":"SwitchHigherPlan","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_address","type":"address"},{"indexed":false,"internalType":"uint256","name":"utilityTokens","type":"uint256"}],"name":"SwitchLowerPlan","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint8","name":"_plan","type":"uint8"}],"name":"takeOutInsurance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"gatewayAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getMonthlyFee","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getNextPaymentDate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"getPlan","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRandomDamagePicture","outputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"hasInsurance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"hasReport","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"isInsuranceActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]',
   'GasInsurance',
 );
 
@@ -90,13 +90,61 @@ class GasInsurance extends _i1.GeneratedContract {
   /// The optional [transaction] parameter can be used to override parameters
   /// like the gas price, nonce and max gas. The `data` and `to` fields will be
   /// set by the contract.
+  Future<String> confirmHigherPlanSwitchPayment(
+    _i1.EthereumAddress _address,
+    BigInt _planNumber,
+    BigInt diff, {
+    required _i1.Credentials credentials,
+    _i1.Transaction? transaction,
+  }) async {
+    final function = self.abi.functions[4];
+    assert(checkSignature(function, 'f0ab7cac'));
+    final params = [
+      _address,
+      _planNumber,
+      diff,
+    ];
+    return write(
+      credentials,
+      transaction,
+      function,
+      params,
+    );
+  }
+
+  /// The optional [transaction] parameter can be used to override parameters
+  /// like the gas price, nonce and max gas. The `data` and `to` fields will be
+  /// set by the contract.
+  Future<String> confirmMonthlyFeePayment(
+    _i1.EthereumAddress _address,
+    BigInt _value, {
+    required _i1.Credentials credentials,
+    _i1.Transaction? transaction,
+  }) async {
+    final function = self.abi.functions[5];
+    assert(checkSignature(function, 'c54e0630'));
+    final params = [
+      _address,
+      _value,
+    ];
+    return write(
+      credentials,
+      transaction,
+      function,
+      params,
+    );
+  }
+
+  /// The optional [transaction] parameter can be used to override parameters
+  /// like the gas price, nonce and max gas. The `data` and `to` fields will be
+  /// set by the contract.
   Future<String> confirmReport(
     _i1.EthereumAddress reviewer,
     _i1.EthereumAddress reviewee, {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[4];
+    final function = self.abi.functions[6];
     assert(checkSignature(function, 'a9bdd930'));
     final params = [
       reviewer,
@@ -121,8 +169,35 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[5];
+    final function = self.abi.functions[7];
     assert(checkSignature(function, '5b6d4376'));
+    final params = [
+      _address,
+      pictureHash,
+      documentHash,
+      damagePrice,
+    ];
+    return write(
+      credentials,
+      transaction,
+      function,
+      params,
+    );
+  }
+
+  /// The optional [transaction] parameter can be used to override parameters
+  /// like the gas price, nonce and max gas. The `data` and `to` fields will be
+  /// set by the contract.
+  Future<String> declareDamageWithTokens(
+    _i1.EthereumAddress _address,
+    String pictureHash,
+    String documentHash,
+    BigInt damagePrice, {
+    required _i1.Credentials credentials,
+    _i1.Transaction? transaction,
+  }) async {
+    final function = self.abi.functions[8];
+    assert(checkSignature(function, '0d3bca12'));
     final params = [
       _address,
       pictureHash,
@@ -146,7 +221,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[6];
+    final function = self.abi.functions[9];
     assert(checkSignature(function, 'a457c2d7'));
     final params = [
       spender,
@@ -169,7 +244,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[7];
+    final function = self.abi.functions[10];
     assert(checkSignature(function, '39509351'));
     final params = [
       spender,
@@ -191,7 +266,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[8];
+    final function = self.abi.functions[11];
     assert(checkSignature(function, 'd95ae721'));
     final params = [_address];
     return write(
@@ -210,7 +285,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[9];
+    final function = self.abi.functions[12];
     assert(checkSignature(function, 'b14420f9'));
     final params = [_address];
     return write(
@@ -230,7 +305,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[10];
+    final function = self.abi.functions[13];
     assert(checkSignature(function, '91938ee3'));
     final params = [
       reviewer,
@@ -251,7 +326,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[11];
+    final function = self.abi.functions[14];
     assert(checkSignature(function, '715018a6'));
     final params = [];
     return write(
@@ -265,13 +340,31 @@ class GasInsurance extends _i1.GeneratedContract {
   /// The optional [transaction] parameter can be used to override parameters
   /// like the gas price, nonce and max gas. The `data` and `to` fields will be
   /// set by the contract.
-  Future<String> setDamageReportContract(
+  Future<String> resignInsurance({
+    required _i1.Credentials credentials,
+    _i1.Transaction? transaction,
+  }) async {
+    final function = self.abi.functions[15];
+    assert(checkSignature(function, 'a9df6615'));
+    final params = [];
+    return write(
+      credentials,
+      transaction,
+      function,
+      params,
+    );
+  }
+
+  /// The optional [transaction] parameter can be used to override parameters
+  /// like the gas price, nonce and max gas. The `data` and `to` fields will be
+  /// set by the contract.
+  Future<String> setGatewayAddress(
     _i1.EthereumAddress _address, {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[12];
-    assert(checkSignature(function, '72fc3e39'));
+    final function = self.abi.functions[16];
+    assert(checkSignature(function, 'a35ff076'));
     final params = [_address];
     return write(
       credentials,
@@ -289,7 +382,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[13];
+    final function = self.abi.functions[17];
     assert(checkSignature(function, '233ffe71'));
     final params = [_address];
     return write(
@@ -309,7 +402,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[14];
+    final function = self.abi.functions[18];
     assert(checkSignature(function, 'e82ea4cd'));
     final params = [
       _address,
@@ -332,7 +425,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[15];
+    final function = self.abi.functions[19];
     assert(checkSignature(function, 'a9059cbb'));
     final params = [
       to,
@@ -356,7 +449,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[16];
+    final function = self.abi.functions[20];
     assert(checkSignature(function, '23b872dd'));
     final params = [
       from,
@@ -379,7 +472,7 @@ class GasInsurance extends _i1.GeneratedContract {
     required _i1.Credentials credentials,
     _i1.Transaction? transaction,
   }) async {
-    final function = self.abi.functions[17];
+    final function = self.abi.functions[21];
     assert(checkSignature(function, 'f2fde38b'));
     final params = [newOwner];
     return write(
@@ -398,7 +491,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress spender, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[18];
+    final function = self.abi.functions[22];
     assert(checkSignature(function, 'dd62ed3e'));
     final params = [
       owner,
@@ -419,7 +512,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress account, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[19];
+    final function = self.abi.functions[23];
     assert(checkSignature(function, '70a08231'));
     final params = [account];
     final response = await read(
@@ -434,7 +527,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
   Future<BigInt> decimals({_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[20];
+    final function = self.abi.functions[24];
     assert(checkSignature(function, '313ce567'));
     final params = [];
     final response = await read(
@@ -448,11 +541,26 @@ class GasInsurance extends _i1.GeneratedContract {
   /// The optional [atBlock] parameter can be used to view historical data. When
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
+  Future<_i1.EthereumAddress> gatewayAddress({_i1.BlockNum? atBlock}) async {
+    final function = self.abi.functions[25];
+    assert(checkSignature(function, '8b851b95'));
+    final params = [];
+    final response = await read(
+      function,
+      params,
+      atBlock,
+    );
+    return (response[0] as _i1.EthereumAddress);
+  }
+
+  /// The optional [atBlock] parameter can be used to view historical data. When
+  /// set, the function will be evaluated in the specified block. By default, the
+  /// latest on-chain block will be used.
   Future<BigInt> getMonthlyFee(
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[21];
+    final function = self.abi.functions[26];
     assert(checkSignature(function, '1311b6f0'));
     final params = [_address];
     final response = await read(
@@ -470,7 +578,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[22];
+    final function = self.abi.functions[27];
     assert(checkSignature(function, '8c6f5a24'));
     final params = [_address];
     final response = await read(
@@ -488,7 +596,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[23];
+    final function = self.abi.functions[28];
     assert(checkSignature(function, '7cb22aaf'));
     final params = [_address];
     final response = await read(
@@ -504,7 +612,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// latest on-chain block will be used.
   Future<GetRandomDamagePicture> getRandomDamagePicture(
       {_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[24];
+    final function = self.abi.functions[29];
     assert(checkSignature(function, 'a063d358'));
     final params = [];
     final response = await read(
@@ -522,7 +630,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[25];
+    final function = self.abi.functions[30];
     assert(checkSignature(function, '8cd42316'));
     final params = [_address];
     final response = await read(
@@ -540,7 +648,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[26];
+    final function = self.abi.functions[31];
     assert(checkSignature(function, '73cba239'));
     final params = [_address];
     final response = await read(
@@ -558,7 +666,7 @@ class GasInsurance extends _i1.GeneratedContract {
     _i1.EthereumAddress _address, {
     _i1.BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[27];
+    final function = self.abi.functions[32];
     assert(checkSignature(function, '7e02a716'));
     final params = [_address];
     final response = await read(
@@ -573,7 +681,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
   Future<String> name({_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[28];
+    final function = self.abi.functions[33];
     assert(checkSignature(function, '06fdde03'));
     final params = [];
     final response = await read(
@@ -588,7 +696,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
   Future<_i1.EthereumAddress> owner({_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[29];
+    final function = self.abi.functions[34];
     assert(checkSignature(function, '8da5cb5b'));
     final params = [];
     final response = await read(
@@ -603,7 +711,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
   Future<String> symbol({_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[30];
+    final function = self.abi.functions[35];
     assert(checkSignature(function, '95d89b41'));
     final params = [];
     final response = await read(
@@ -618,7 +726,7 @@ class GasInsurance extends _i1.GeneratedContract {
   /// set, the function will be evaluated in the specified block. By default, the
   /// latest on-chain block will be used.
   Future<BigInt> totalSupply({_i1.BlockNum? atBlock}) async {
-    final function = self.abi.functions[31];
+    final function = self.abi.functions[36];
     assert(checkSignature(function, '18160ddd'));
     final params = [];
     final response = await read(
@@ -650,6 +758,27 @@ class GasInsurance extends _i1.GeneratedContract {
     });
   }
 
+  /// Returns a live stream of all ClientSuspended events emitted by this contract.
+  Stream<ClientSuspended> clientSuspendedEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('ClientSuspended');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return ClientSuspended(decoded);
+    });
+  }
+
   /// Returns a live stream of all CompensationPayment events emitted by this contract.
   Stream<CompensationPayment> compensationPaymentEvents({
     _i1.BlockNum? fromBlock,
@@ -671,6 +800,27 @@ class GasInsurance extends _i1.GeneratedContract {
     });
   }
 
+  /// Returns a live stream of all ConfirmPayment events emitted by this contract.
+  Stream<ConfirmPayment> confirmPaymentEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('ConfirmPayment');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return ConfirmPayment(decoded);
+    });
+  }
+
   /// Returns a live stream of all DamageDeclaration events emitted by this contract.
   Stream<DamageDeclaration> damageDeclarationEvents({
     _i1.BlockNum? fromBlock,
@@ -689,6 +839,48 @@ class GasInsurance extends _i1.GeneratedContract {
         result.data!,
       );
       return DamageDeclaration(decoded);
+    });
+  }
+
+  /// Returns a live stream of all InsuranceRegistration events emitted by this contract.
+  Stream<InsuranceRegistration> insuranceRegistrationEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('InsuranceRegistration');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return InsuranceRegistration(decoded);
+    });
+  }
+
+  /// Returns a live stream of all InsuranceResigned events emitted by this contract.
+  Stream<InsuranceResigned> insuranceResignedEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('InsuranceResigned');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return InsuranceResigned(decoded);
     });
   }
 
@@ -731,6 +923,69 @@ class GasInsurance extends _i1.GeneratedContract {
         result.data!,
       );
       return OwnershipTransferred(decoded);
+    });
+  }
+
+  /// Returns a live stream of all ReportApproved events emitted by this contract.
+  Stream<ReportApproved> reportApprovedEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('ReportApproved');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return ReportApproved(decoded);
+    });
+  }
+
+  /// Returns a live stream of all ReportConfirmed events emitted by this contract.
+  Stream<ReportConfirmed> reportConfirmedEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('ReportConfirmed');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return ReportConfirmed(decoded);
+    });
+  }
+
+  /// Returns a live stream of all ReportRefused events emitted by this contract.
+  Stream<ReportRefused> reportRefusedEvents({
+    _i1.BlockNum? fromBlock,
+    _i1.BlockNum? toBlock,
+  }) {
+    final event = self.event('ReportRefused');
+    final filter = _i1.FilterOptions.events(
+      contract: self,
+      event: event,
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+    );
+    return client.events(filter).map((_i1.FilterEvent result) {
+      final decoded = event.decodeResults(
+        result.topics!,
+        result.data!,
+      );
+      return ReportRefused(decoded);
     });
   }
 
@@ -821,6 +1076,13 @@ class Approval {
   final BigInt value;
 }
 
+class ClientSuspended {
+  ClientSuspended(List<dynamic> response)
+      : address = (response[0] as _i1.EthereumAddress);
+
+  final _i1.EthereumAddress address;
+}
+
 class CompensationPayment {
   CompensationPayment(List<dynamic> response)
       : address = (response[0] as _i1.EthereumAddress),
@@ -831,6 +1093,16 @@ class CompensationPayment {
   final BigInt damagePrice;
 }
 
+class ConfirmPayment {
+  ConfirmPayment(List<dynamic> response)
+      : address = (response[0] as _i1.EthereumAddress),
+        value = (response[1] as BigInt);
+
+  final _i1.EthereumAddress address;
+
+  final BigInt value;
+}
+
 class DamageDeclaration {
   DamageDeclaration(List<dynamic> response)
       : address = (response[0] as _i1.EthereumAddress),
@@ -839,6 +1111,23 @@ class DamageDeclaration {
   final _i1.EthereumAddress address;
 
   final dynamic report;
+}
+
+class InsuranceRegistration {
+  InsuranceRegistration(List<dynamic> response)
+      : address = (response[0] as _i1.EthereumAddress),
+        plan = (response[1] as dynamic);
+
+  final _i1.EthereumAddress address;
+
+  final dynamic plan;
+}
+
+class InsuranceResigned {
+  InsuranceResigned(List<dynamic> response)
+      : address = (response[0] as _i1.EthereumAddress);
+
+  final _i1.EthereumAddress address;
 }
 
 class MontlyFeePayment {
@@ -861,12 +1150,41 @@ class OwnershipTransferred {
   final _i1.EthereumAddress newOwner;
 }
 
+class ReportApproved {
+  ReportApproved(List<dynamic> response) : report = (response[0] as dynamic);
+
+  final dynamic report;
+}
+
+class ReportConfirmed {
+  ReportConfirmed(List<dynamic> response)
+      : reviewer = (response[0] as _i1.EthereumAddress),
+        report = (response[1] as dynamic);
+
+  final _i1.EthereumAddress reviewer;
+
+  final dynamic report;
+}
+
+class ReportRefused {
+  ReportRefused(List<dynamic> response)
+      : reviewer = (response[0] as _i1.EthereumAddress),
+        report = (response[1] as dynamic);
+
+  final _i1.EthereumAddress reviewer;
+
+  final dynamic report;
+}
+
 class SwitchHigherPlan {
   SwitchHigherPlan(List<dynamic> response)
       : address = (response[0] as _i1.EthereumAddress),
-        feeDifference = (response[1] as BigInt);
+        planNumber = (response[1] as BigInt),
+        feeDifference = (response[2] as BigInt);
 
   final _i1.EthereumAddress address;
+
+  final BigInt planNumber;
 
   final BigInt feeDifference;
 }

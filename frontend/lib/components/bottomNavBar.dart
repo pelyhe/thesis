@@ -23,6 +23,10 @@ class BottomNavBar extends StatefulWidget {
     Get.toNamed('/judge');
   }
 
+  static pop(BuildContext context, int idx) {
+    BottomNavBar.selectedIndex = idx;
+    Navigator.pop(context);
+  }
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();

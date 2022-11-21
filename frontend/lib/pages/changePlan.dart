@@ -1,12 +1,20 @@
+import 'dart:async';
+
+import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:formula/components/bottomNavBar.dart';
 import 'package:formula/components/payWithGitPopup.dart';
+import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
+import 'package:formula/pages/error.dart';
+import 'package:formula/pages/loading.dart';
+import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ChangePlanPage extends StatefulWidget {
   const ChangePlanPage({Key? key}) : super(key: key);
@@ -21,21 +29,29 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.refresh(context);
-    return GetBuilder<ChangePlanController>(
-        init: controller,
-        builder: (controller) {
-          return Scaffold(
-              appBar: AppBar(
-                backgroundColor: AppColors.orange,
-                title: const Text('Gas Insurance'),
-              ),
-              backgroundColor: Colors.transparent,
-              body: scaffoldBody(
-                context: context,
-                mobileBody: mobileBody(),
-                tabletBody: mobileBody(),
-              ),
-              bottomNavigationBar: const BottomNavBar());
+    return FutureBuilder(
+        future: controller.init(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingPage();
+          } else {
+            return GetBuilder<ChangePlanController>(
+                init: controller,
+                builder: (controller) {
+                  return Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: AppColors.orange,
+                        title: const Text('Gas Insurance'),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      body: scaffoldBody(
+                        context: context,
+                        mobileBody: mobileBody(),
+                        tabletBody: mobileBody(),
+                      ),
+                      bottomNavigationBar: const BottomNavBar());
+                });
+          }
         });
   }
 
@@ -59,7 +75,8 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 25, horizontal: 10.0),
                   child: Row(
                     children: const [
                       Icon(Icons.warning,
@@ -71,7 +88,8 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                         child: Text(
                           "Fees will be payed automatically after changing plan.",
                           style: TextStyle(
-                              fontSize: 17, color: Color.fromARGB(255, 255, 17, 0)),
+                              fontSize: 17,
+                              color: Color.fromARGB(255, 255, 17, 0)),
                         ),
                       )
                     ],
@@ -208,31 +226,31 @@ class ChangePlanController extends GetxController {
     update();
   }
 
-  submit(BuildContext context) {
-    if (balanceIsNotNull()) {
-      final res = getNumberOfUsableTokens();
-      showDialog(
-          context: context,
-          builder: (BuildContext ctx) => PayWithTokens(
-                tokenNumber: res,
-              ));
-    } else {
-      // call changePlan sc function
-      BottomNavBar.toOverview();
+  init() async {
+    BigInt currentPlanResult = await AuthenticationService.instance.contract!
+        .getPlan(AuthenticationService.instance.account!);
+    currentPlan = currentPlanResult.toInt();
+  }
+
+  submit(BuildContext context) async {
+    final transaction = Transaction(
+      to: Environment.contractAddress,
+      from: AuthenticationService.instance.account,
+      value: EtherAmount.fromUnitAndValue(EtherUnit.finney, 0),
+    );
+
+    await launchUrlString("https://metamask.app.link/",
+        mode: LaunchMode.externalApplication);
+    
+    try {
+      await AuthenticationService.instance.contract!.changePlan(
+          AuthenticationService.instance.account!, BigInt.from(currentPlan),
+          credentials: AuthenticationService.instance.credentials!,
+          transaction: transaction);
+    } catch (error) {
+      Get.to(ErrorScreen(errorDetails: error.toString()));
     }
-  }
 
-  int getNumberOfUsableTokens() {
-    // TODO: call sc function, which returns the number of tokens which can
-    // be used for plan change
-
-    // it returns 0, if no tokens, number of tokens if its not enoguh for plan change
-    // and the number of tokens required for the plan change, if its less than balance
-    return 3;
-  }
-
-  bool balanceIsNotNull() {
-    // call sc similar function
-    return true;
+    Timer(const Duration(seconds: 5), () => Navigator.pop(context));
   }
 }

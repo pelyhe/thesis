@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
+import 'package:formula/pages/error.dart';
 import 'package:formula/service/authService.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -135,7 +138,10 @@ class _OverviewPageState extends State<OverviewPage> {
             ),
             Expanded(
               child: AutoSizeText(
-                "You have ${controller.daysLeft} days until the next payment",
+                controller.daysLeft > 0 ? "You have ${controller.daysLeft} days until the next payment" :
+                controller.hoursLeft > 0 ? "You have ${controller.hoursLeft} hours until the next payment" :
+                controller.minutesLeft > 0 ?  "You have ${controller.minutesLeft} minutes until the next payment" :
+                "Your payment is due, please pay your fees.",
                 maxLines: 3,
                 style: const TextStyle(
                     fontSize: 17, color: Color.fromARGB(255, 105, 103, 103)),
@@ -207,7 +213,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10),
                 child: Center(
                   child: OutlinedButton(
-                    onPressed: controller.payMonthlyFee,
+                    onPressed: () => controller.payMonthlyFee(context),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0))),
@@ -373,7 +379,7 @@ class _OverviewPageState extends State<OverviewPage> {
 class OverviewController extends GetxController {
   bool isInsuranceValid = false;
   int currentPlan = 2;
-  int daysLeft = 12; // getNextPayment - now() in unix time
+  int daysLeft = 0, hoursLeft = 0, minutesLeft = 0; // getNextPayment - now() in unix time
   int gitTokens = 9;
 
   init() async {
@@ -385,14 +391,16 @@ class OverviewController extends GetxController {
     BigInt nextPaymentResult = await AuthenticationService.instance.contract!
         .getNextPaymentDate(AuthenticationService.instance.account!);
     DateTime nextPaymentDate =
-        DateTime.fromMicrosecondsSinceEpoch(nextPaymentResult.toInt());
+        DateTime.fromMillisecondsSinceEpoch(nextPaymentResult.toInt() * 1000);
     daysLeft = nextPaymentDate.difference(DateTime.now()).inDays;
+    hoursLeft = nextPaymentDate.difference(DateTime.now()).inHours;
+    minutesLeft = nextPaymentDate.difference(DateTime.now()).inMinutes;
     BigInt gitTokensResult = await AuthenticationService.instance.contract!
         .balanceOf(AuthenticationService.instance.account!);
     gitTokens = gitTokensResult.toInt();
   }
 
-  payMonthlyFee() async {
+  payMonthlyFee(BuildContext context) async {
     final transaction = Transaction(
       to: Environment.contractAddress,
       from: AuthenticationService.instance.account,
@@ -402,11 +410,16 @@ class OverviewController extends GetxController {
     await launchUrlString("https://metamask.app.link/",
         mode: LaunchMode.externalApplication);
 
-    await AuthenticationService.instance.contract!.payMonthlyFee(
-        AuthenticationService.instance.account!,
-        credentials: AuthenticationService.instance.credentials!,
-        transaction: transaction);
-
+    try {
+      await AuthenticationService.instance.contract!.payMonthlyFee(
+          AuthenticationService.instance.account!,
+          credentials: AuthenticationService.instance.credentials!,
+          transaction: transaction);
+    } catch (error) {
+      Get.to(ErrorScreen(errorDetails: error.toString()));
+    }
 
   }
+
+
 }
