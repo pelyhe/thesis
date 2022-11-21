@@ -69,6 +69,11 @@ const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
+			{
 				"internalType": "uint8",
 				"name": "_plan",
 				"type": "uint8"
@@ -78,6 +83,19 @@ const abi = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "ClientSuspended",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -104,6 +122,71 @@ const abi = [
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_planNumber",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "diff",
+				"type": "uint32"
+			}
+		],
+		"name": "confirmHigherPlanSwitchPayment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "confirmMonthlyFeePayment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "ConfirmPayment",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "reviewer",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "reviewee",
+				"type": "address"
 			}
 		],
 		"name": "confirmReport",
@@ -128,14 +211,14 @@ const abi = [
 						"type": "uint32"
 					},
 					{
-						"internalType": "bytes",
+						"internalType": "string",
 						"name": "pictureIpfsHash",
-						"type": "bytes"
+						"type": "string"
 					},
 					{
-						"internalType": "bytes",
+						"internalType": "string",
 						"name": "documentIpfsHash",
-						"type": "bytes"
+						"type": "string"
 					},
 					{
 						"internalType": "uint32",
@@ -151,6 +234,11 @@ const abi = [
 						"internalType": "uint8",
 						"name": "numberOfConfirmations",
 						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "confirmedBy",
+						"type": "address"
 					},
 					{
 						"internalType": "bool",
@@ -170,14 +258,19 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "bytes",
-				"name": "pictureHash",
-				"type": "bytes"
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
 			},
 			{
-				"internalType": "bytes",
+				"internalType": "string",
+				"name": "pictureHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "documentHash",
-				"type": "bytes"
+				"type": "string"
 			},
 			{
 				"internalType": "uint32",
@@ -186,6 +279,34 @@ const abi = [
 			}
 		],
 		"name": "declareDamage",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "pictureHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "documentHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "damagePrice",
+				"type": "uint32"
+			}
+		],
+		"name": "declareDamageWithTokens",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -242,6 +363,55 @@ const abi = [
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint8",
+						"name": "planNumber",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint32",
+						"name": "monthlyFee",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "compensationPercentage",
+						"type": "uint8"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct GasInsurance.Plan",
+				"name": "plan",
+				"type": "tuple"
+			}
+		],
+		"name": "InsuranceRegistration",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "InsuranceResigned",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
@@ -290,7 +460,13 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
 		"name": "payMonthlyFee",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -300,7 +476,12 @@ const abi = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_address",
+				"name": "reviewer",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "reviewee",
 				"type": "address"
 			}
 		],
@@ -317,6 +498,190 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint32",
+						"name": "id",
+						"type": "uint32"
+					},
+					{
+						"internalType": "string",
+						"name": "pictureIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "documentIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "damagePrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "compensationPrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "numberOfConfirmations",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "confirmedBy",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct DamageReport.Report",
+				"name": "report",
+				"type": "tuple"
+			}
+		],
+		"name": "ReportApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "reviewer",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint32",
+						"name": "id",
+						"type": "uint32"
+					},
+					{
+						"internalType": "string",
+						"name": "pictureIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "documentIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "damagePrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "compensationPrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "numberOfConfirmations",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "confirmedBy",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct DamageReport.Report",
+				"name": "report",
+				"type": "tuple"
+			}
+		],
+		"name": "ReportConfirmed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "reviewer",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint32",
+						"name": "id",
+						"type": "uint32"
+					},
+					{
+						"internalType": "string",
+						"name": "pictureIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "documentIpfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "damagePrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "compensationPrice",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "numberOfConfirmations",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "confirmedBy",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct DamageReport.Report",
+				"name": "report",
+				"type": "tuple"
+			}
+		],
+		"name": "ReportRefused",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "resignInsurance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -324,7 +689,7 @@ const abi = [
 				"type": "address"
 			}
 		],
-		"name": "setDamageReportContract",
+		"name": "setGatewayAddress",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -350,6 +715,12 @@ const abi = [
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "planNumber",
+				"type": "uint8"
 			},
 			{
 				"indexed": false,
@@ -382,6 +753,11 @@ const abi = [
 	},
 	{
 		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			},
 			{
 				"internalType": "uint8",
 				"name": "_plan",
@@ -541,6 +917,19 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "gatewayAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -573,6 +962,43 @@ const abi = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "getPlan",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getRandomDamagePicture",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
