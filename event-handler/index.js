@@ -28,34 +28,28 @@ async function main() {
     };
 
 
-    // SwitchHigherPlan(address indexed _address, uint32 feeDifference)
-    // SwitchLowerPlan(address indexed _address, uint256 utilityTokens)
-    // CompensationPayment(address _address, uint256 damagePrice)
-    // DamageDeclaration(address _address, Report report)
-    // MontlyFeePayment(address indexed _address, uint256 _value)
-
-    class Report {
-        //uint32 id;
-        //bytes pictureIpfsHash;
-        //bytes documentIpfsHash;
-        //uint32 damagePrice;
-        //uint32 compensationPrice;
-        //uint8 numberOfConfirmations;
-        //bool approved;
-    }
-
     insuranceTokenContract.events.CompensationPayment(options)
         .on('data', event => {
             const data = {
-                //dataType: "CompensationPayment",
                 address: event.returnValues._address,
                 damagePrice: event.returnValues.damagePrice
             }
-            console.warn('CompensationPayment:');
+            console.warn('\x1b[45m%s\x1b[0m', 'CompensationPayment:');
             console.log(data);
             console.log('\n');
 
-            // TODO: API CALL
+            payCompensation(address, damagePrice);
+        })
+
+    insuranceTokenContract.events.ConfirmPayment(options)
+        .on('data', event => {
+            const data = {
+                address: event.returnValues._address,
+                value: event.returnValues._value
+            }
+            console.warn('\x1b[45m%s\x1b[0m', 'ConfirmPayment:');
+            console.log(data);
+            console.log('\n');
         })
 
     insuranceTokenContract.events.DamageDeclaration(options)
@@ -63,26 +57,22 @@ async function main() {
             const data = {
                 //dataType: "DamageDeclaration",
                 address: event.returnValues._address,
-                report: event.returnValues.report
+                reportId: event.returnValues.reportId
             }
-            console.warn('DamageDeclaration:');
+            console.warn('\x1b[45m%s\x1b[0m', 'DamageDeclaration:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.ReportApproved(options)
         .on('data', event => {
             const data = {
                 //dataType: "DamageDeclaration",
-                report: event.returnValues.report
+                reportId: event.returnValues.reportId
             }
-            console.warn('ReportApproved:');
+            console.warn('\x1b[45m%s\x1b[0m', 'ReportApproved:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.ReportConfirmed(options)
@@ -90,13 +80,11 @@ async function main() {
             const data = {
                 //dataType: "DamageDeclaration",
                 address: event.returnValues.reviewer,
-                report: event.returnValues.report
+                reportId: event.returnValues.reportId
             }
-            console.warn('ReportConfirmed:');
+            console.warn('\x1b[45m%s\x1b[0m', 'ReportConfirmed:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.ReportRefused(options)
@@ -104,13 +92,11 @@ async function main() {
             const data = {
                 //dataType: "DamageDeclaration",
                 address: event.returnValues.reviewer,
-                report: event.returnValues.report
+                reportId: event.returnValues.reportId
             }
-            console.warn('ReportRefused:');
+            console.warn('\x1b[45m%s\x1b[0m', 'ReportRefused:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
 
@@ -121,27 +107,25 @@ async function main() {
                 address: event.returnValues._address,
                 value: event.returnValues._value
             }
-            console.warn('MontlyFeePayment:');
+            console.log('\x1b[45m%s\x1b[0m', 'MontlyFeePayment:');
             console.log(data);
             console.log('\n');
+            
             payMonthlyFee(data.address, data.value);
-            //contract.functions.confirmMonthlyFeePayment(data.address);
-
         })
 
     insuranceTokenContract.events.SwitchHigherPlan(options)
         .on('data', event => {
             const data = {
-                //dataType: "SwitchHigherPlan",
                 address: event.returnValues._address,
                 planNumber: event.returnValues.planNumber,
                 feeDifference: event.returnValues.feeDifference
             }
-            console.warn('SwitchHigherPlan:');
+            console.warn('\x1b[45m%s\x1b[0m', 'SwitchHigherPlan:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
+            
+            switchToHigherPlan(data.address, data.planNumber, data.feeDifference);
         })
 
     insuranceTokenContract.events.SwitchLowerPlan(options)
@@ -151,52 +135,41 @@ async function main() {
                 address: event.returnValues._address,
                 utilityTokens: event.returnValues.utilityTokens
             }
-            console.warn('SwitchLowerPlan:');
+            console.warn('\x1b[45m%s\x1b[0m', 'SwitchLowerPlan:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.InsuranceResigned(options)
         .on('data', event => {
             const data = {
-                //dataType: "InsuranceResigned",
                 address: event.returnValues._address,
             }
-            console.warn('InsuranceResigned:');
+            console.warn('\x1b[45m%s\x1b[0m', 'InsuranceResigned:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.InsuranceRegistration(options)
         .on('data', event => {
 
             const data = {
-                //dataType: "InsuranceResigned",
                 address: event.returnValues._address,
-                plan: event.returnValues.plan
+                planNumber: event.returnValues.planNumber
             }
-            console.warn('InsuranceRegistration:');
+            console.warn('\x1b[45m%s\x1b[0m', 'InsuranceRegistration:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
     insuranceTokenContract.events.ClientSuspended(options)
         .on('data', event => {
             const data = {
-                //dataType: "InsuranceResigned",
                 address: event.returnValues._address,
             }
-            console.warn('ClientSuspended:');
+            console.warn('\x1b[45m%s\x1b[0m', 'ClientSuspended:');
             console.log(data);
             console.log('\n');
-
-            // TODO: API CALL
         })
 
 
@@ -217,13 +190,13 @@ async function main() {
                 } else { // client 2
                     idx = 2;
                 }
-    
+
                 const signature = signTransaction(
-                    idx, 
-                    environment.addresses[address], 
-                    environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'], 
-                    value / 100, 
-                    "default", 
+                    idx,
+                    environment.addresses[address],
+                    environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
+                    value / 100,
+                    "default",
                     parseInt(nonce)
                 );
 
@@ -237,13 +210,108 @@ async function main() {
                     "to": environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
                     "v": signature.v
                 })
-                .then(function (response) {
-                    console.log(response.data);
-                    contract.functions.confirmMonthlyFeePayment(address, parseInt(value));
+                    .then(function (response) {
+                        console.log(response.data);
+                        contract.functions.confirmMonthlyFeePayment(address, parseInt(value), {
+                            gasLimit: 100000,
+                          });
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    }
+
+    function payCompensation(address, value) {
+
+        var nonce;
+        axios.get('http://vm.niif.cloud.bme.hu:9200/nonce', {
+            params: {
+                address: environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC']
+            }
+        })
+            .then(function (response) {
+                nonce = response.data.response;
+
+                const signature = signTransaction(
+                    0,
+                    environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
+                    environment.addresses[address],
+                    value / 100,
+                    "default",
+                    parseInt(nonce)
+                );
+
+                axios.post('http://vm.niif.cloud.bme.hu:9200/transferAsset', {
+                    "amount": parseInt(value / 100),
+                    "from": environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
+                    "nonce": parseInt(nonce),
+                    "pocket": "default",
+                    "r": signature.r.toString("base64"),
+                    "s": signature.s.toString("base64"),
+                    "to": environment.addresses[address],
+                    "v": signature.v
                 })
-                .catch(function (error) {
-                    console.log(error);
+                    .then(function (response) {
+                        console.log(response.data);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    }
+
+    function switchToHigherPlan(address, planNumber, value) {
+        var nonce;
+        axios.get('http://vm.niif.cloud.bme.hu:9200/nonce', {
+            params: {
+                address: environment.addresses[address]
+            }
+        })
+            .then(function (response) {
+                nonce = response.data.response;
+
+                var idx;
+                if (address == '0x53751f8b8b82DC367C82D00095BAaB7b4dA16F3e') {    // client 1
+                    idx = 1;
+                } else { // client 2
+                    idx = 2;
+                }
+
+                const signature = signTransaction(
+                    idx,
+                    environment.addresses[address],
+                    environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
+                    value / 100,
+                    "default",
+                    parseInt(nonce)
+                );
+
+                axios.post('http://vm.niif.cloud.bme.hu:9200/transferAsset', {
+                    "amount": parseInt(value / 100),
+                    "from": environment.addresses[address],
+                    "nonce": parseInt(nonce),
+                    "pocket": "default",
+                    "r": signature.r.toString("base64"),
+                    "s": signature.s.toString("base64"),
+                    "to": environment.addresses['0xFfcBb58AD6892853c86192C108837f827D4b23eC'],
+                    "v": signature.v
                 })
+                    .then(function (response) {
+                        console.log(response.data);
+                        contract.functions.confirmHigherPlanSwitchPayment(address, parseInt(planNumber), parseInt(value), {
+                            gasLimit: 100000,
+                          });
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
             })
             .catch(function (error) {
                 console.log(error);
@@ -253,40 +321,37 @@ async function main() {
 
     function signTransaction() {
         const jsutil = require('ethereumjs-util');
-    
-        console.log(arguments);
 
         if (arguments.length <= 1) {
             console.error('ERROR: Insufficient number of arguments');
             console.error('Usage: node sign_home_native_message.js <keyIndex> <...message parts>');
             return;
         }
-    
+
         const keyPairs = require('./keys.json').keypair;
         const signingKeyIndex = arguments[0];
-    
-        console.log(keyPairs.length);
+
         if ((signingKeyIndex < 0) || (signingKeyIndex >= keyPairs.length)) {
             console.error(`ERROR: Key index out of range [0,${keyPairs.length - 1}]`);
             return;
         }
-    
+
         var signingKey = keyPairs[signingKeyIndex].privateKeyString;
         if (signingKey.startsWith('0x')) {
             signingKey = signingKey.substring(2);
         }
-    
+
         const messageParts = Array.prototype.slice.call(arguments, 1);
         const message = Buffer.from(messageParts.map(a => a.toString()).join(' '));
-    
+
         const messageHash = jsutil.hashPersonalMessage(message);
         const keyBuffer = Buffer.from(signingKey, 'hex');
         const signature = jsutil.ecsign(messageHash, keyBuffer);
-    
+
         console.log("Signature v: " + signature.v);
         console.log("Signature r (base64): " + signature.r.toString("base64"));
         console.log("Signature s (base64): " + signature.s.toString("base64"));
-    
+
         return signature;
     }
 

@@ -1,6 +1,6 @@
 const environment = {
     WEBSOCKET_PROVIDER: 'wss://eth-goerli.g.alchemy.com/v2/kREXgsEzzHsETo5g2-mg8rIuIv4hwLCc',
-    CONTRACT_ADDRESS: '0xcFA6B75d335b1AFbBF72cB1D46E904715f20e2f8',
+    CONTRACT_ADDRESS: '0xb9A1d17e0251Da8bc3E60D904dd082b13e453A1D',
     API_KEY: 'GN_bI3lcQ28V2S9b8AejXDaaAYnX22ZN',
     PRIVATE_KEY: '9883650e66b0a021772a6f6b6a36c76c8e88ec0233d4d96e78741f2a51aa0b4b',
     addresses : {
