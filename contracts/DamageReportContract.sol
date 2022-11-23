@@ -15,8 +15,11 @@ abstract contract DamageReport is GasInsurance {
         activeReports = 0;
     }
 
-    event CompensationPayment(address _address, uint256 damagePrice);
-    event DamageDeclaration(address _address, Report report);
+    event CompensationPayment(address indexed _address, uint256 indexed damagePrice);
+    event DamageDeclaration(address indexed _address, uint32 indexed reportId);
+    event ReportApproved(uint32 indexed reportId);
+    event ReportConfirmed(address indexed reviewer, uint32 indexed reportId);
+    event ReportRefused(address indexed reviewer, uint32 indexed reportId);
 
     struct Report {
         uint32 id;
@@ -25,7 +28,7 @@ abstract contract DamageReport is GasInsurance {
         uint32 damagePrice;
         uint32 compensationPrice;
         uint8 numberOfConfirmations;
-        address confirmedBy;        // to be sure that one person cannot confirm twice
+        address confirmedBy; // to be sure that one person cannot confirm twice
         bool approved;
     }
 
@@ -55,7 +58,10 @@ abstract contract DamageReport is GasInsurance {
     }
 
     modifier canJudge(address _address) {
-        require(insurances[_address].judgementCooldown < block.timestamp, "You are on cooldown. Come back later!");
+        require(
+            insurances[_address].judgementCooldown < block.timestamp,
+            "You are on cooldown. Come back later!"
+        );
         _;
     }
 
@@ -78,10 +84,7 @@ abstract contract DamageReport is GasInsurance {
         uint32 damagePrice
     ) external ownsInsurance(_address) isInsuranceStatusActive(_address) {
         Insurance memory insurance = insurances[_address];
-        uint32 compensation = calculateCompensation(
-            damagePrice,
-            insurance.plan
-        );
+        uint32 compensation = (damagePrice * insurance.plan.compensationPercentage) / 100;
         activeReports++;
         Report memory report = Report({
             id: nextReportId,
@@ -94,18 +97,10 @@ abstract contract DamageReport is GasInsurance {
             approved: false
         });
 
-        emit DamageDeclaration(_address, report);
+        emit DamageDeclaration(_address, report.id);
         reports[_address] = report;
         report_keys.push(_address);
         nextReportId++;
-    }
-
-    function calculateCompensation(uint32 totalDamage, Plan memory plan)
-        internal
-        pure
-        returns (uint32)
-    {
-        return (totalDamage * plan.compensationPercentage) / 100;
     }
 
     // the insurance company approves the damage report itself
@@ -117,9 +112,10 @@ abstract contract DamageReport is GasInsurance {
     {
         activeReports--;
         Report storage report = reports[_address];
+        emit ReportApproved(report.id);
         report.approved = true;
         approvedReports[_address] = report;
-        delete report_keys[report.id-1];       // deletes the element from key, and leave a space there
+        delete report_keys[report.id - 1]; // deletes the element from key, and leave a space there
         delete (reports[_address]);
     }
 
@@ -134,12 +130,13 @@ abstract contract DamageReport is GasInsurance {
         confirmedBefore(reports[reviewee], reviewer)
     {
         Report storage report = reports[reviewee];
+        emit ReportConfirmed(reviewer, report.id);
         report.numberOfConfirmations++;
         _mint(reviewer, 1);
         if (report.numberOfConfirmations > 1) {
             report.approved = true;
             approvedReports[reviewee] = report;
-            delete report_keys[report.id-1];       // deletes the element from key, and leave a space there
+            delete report_keys[report.id - 1]; // deletes the element from key, and leave a space there
             delete (reports[reviewee]);
         } else {
             report.confirmedBy = reviewer;
@@ -160,7 +157,7 @@ abstract contract DamageReport is GasInsurance {
         ownsInsurance(reviewer)
         canJudge(reviewer)
     {
-        // TODO: what to do if someone refuses a report?
+        emit ReportRefused(reviewer, reports[reviewee].id);
         Insurance storage insurance = insurances[reviewer];
         insurance.numberOfJudgements++;
         _mint(reviewer, 1);
@@ -170,26 +167,32 @@ abstract contract DamageReport is GasInsurance {
         }
     }
 
-
     function payCompensation(address _address)
         external
         onlyOwner
         isReportApproved(_address)
     {
-        Report memory report = approvedReports[_address];
-        emit CompensationPayment(_address, report.compensationPrice);
+        emit CompensationPayment(_address, approvedReports[_address].compensationPrice);
     }
 
-    function getRandomDamagePicture() external view returns (address, string memory) {
+    function getRandomDamagePicture()
+        external
+        view
+        returns (address, string memory)
+    {
         require(activeReports > 0, "No active damage reports.");
         address randomAddress = address(0);
-        uint randNonce = 1;
+        uint256 randNonce = 1;
         while (randomAddress == address(0)) {
-            uint randomIndex = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % report_keys.length;
+            uint256 randomIndex = uint256(
+                keccak256(
+                    abi.encodePacked(block.timestamp, msg.sender, randNonce)
+                )
+            ) % report_keys.length;
             randNonce++;
             randomAddress = report_keys[randomIndex];
         }
-        
+
         return (randomAddress, reports[randomAddress].pictureIpfsHash);
     }
 }

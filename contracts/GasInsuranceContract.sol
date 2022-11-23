@@ -8,15 +8,20 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 abstract contract GasInsurance is Ownable, ERC20 {
     uint32 internal nextInsuranceId;
+    address internal gatewayAddress;
 
     constructor() {
         nextInsuranceId = 1;
     }
 
-    event MontlyFeePayment(address indexed _address, uint256 _value);
+    event MontlyFeePayment(address indexed _address, uint32 indexed _value);
+    event InsuranceResigned(address indexed _address);
+    event InsuranceRegistration(address indexed _address, uint8 indexed planNumber);
+    event ClientSuspended(address indexed _address);
+    event ConfirmPayment(address indexed _address, uint32 indexed _value);
 
     address damageReportAddress;
-    uint256 paymentFrequency = 10 seconds;
+    uint256 paymentFrequency = 3 minutes;
     uint256 gracePeriod = 1 minutes;
 
     struct Plan {
@@ -37,6 +42,13 @@ abstract contract GasInsurance is Ownable, ERC20 {
     }
 
     mapping(address => Insurance) insurances;
+
+    modifier onlyGateway() {
+        require(
+            msg.sender == gatewayAddress
+        );
+        _;
+    }
 
     modifier ownsInsurance(address _address) {
         require(hasInsurance(_address), "You have to own an insurance!");
@@ -75,13 +87,11 @@ abstract contract GasInsurance is Ownable, ERC20 {
     }
 
     modifier planNotTheSame(address _address, uint8 planNum) {
-        require(insurances[_address].plan.planNumber != planNum, "You chose the same plan!");
+        require(
+            insurances[_address].plan.planNumber != planNum,
+            "You chose the same plan!"
+        );
         _;
-    }
-
-    // owner sets the other contract's address
-    function setDamageReportContract(address _address) external onlyOwner {
-        damageReportAddress = _address;
     }
 
     // returns if address has insurance or not
@@ -92,10 +102,18 @@ abstract contract GasInsurance is Ownable, ERC20 {
         return false;
     }
 
-    function getPlan(address _address) external view ownsInsurance(_address) returns (uint8)  {
-        return insurances[_address].plan.planNumber;
+    function setGatewayAddress(address _address) external onlyOwner {
+        gatewayAddress = _address;
     }
 
+    function getPlan(address _address)
+        external
+        view
+        ownsInsurance(_address)
+        returns (uint8)
+    {
+        return insurances[_address].plan.planNumber;
+    }
 
     // checks if the insurance status is active or suspended
     function isInsuranceActive(address _address)
@@ -105,13 +123,6 @@ abstract contract GasInsurance is Ownable, ERC20 {
         returns (bool)
     {
         return insurances[_address].isActive;
-    }
-
-    function setStatus(address _address, bool _isActive)
-        internal
-        ownsInsurance(_address)
-    {
-        insurances[_address].isActive = _isActive;
     }
 
     // returns a plan object from plan's number
@@ -151,18 +162,26 @@ abstract contract GasInsurance is Ownable, ERC20 {
         isPlanValid(_plan)
         notOwnInsurance(_address)
     {
+        Plan memory plan = createPlan(_plan);
+        emit InsuranceRegistration(_address, plan.planNumber);
         uint256 suspendDate = block.timestamp + gracePeriod;
         insurances[_address] = Insurance(
-            nextInsuranceId,    // id
-            false,      // isActive
-            createPlan(_plan),  // plan
-            block.timestamp,    // next payment
-            suspendDate,    // suspend date
-            block.timestamp,    // judgement cooldown timer
-            0   // number of judges
+            nextInsuranceId, // id
+            false, // isActive
+            plan, // plan
+            block.timestamp, // next payment
+            suspendDate, // suspend date
+            block.timestamp, // judgement cooldown timer
+            0 // number of judges
         );
         nextInsuranceId++;
         payMonthlyFee(_address);
+    }
+
+    // user resigns the insurance
+    function resignInsurance() external ownsInsurance(msg.sender) {
+        delete insurances[msg.sender];
+        emit InsuranceResigned(msg.sender);
     }
 
     function getNextPaymentDate(address _address)
@@ -189,14 +208,17 @@ abstract contract GasInsurance is Ownable, ERC20 {
         ownsInsurance(_address)
         isPaymentDue(_address)
     {
+        emit MontlyFeePayment(_address, uint32(insurances[_address].plan.monthlyFee));
+    }
+
+    // gateway confirms the success of the payment
+    function confirmMonthlyFeePayment(address _address, uint256 _value)
+        external
+        onlyGateway
+        ownsInsurance(_address)
+        isPaymentDue(_address)
+    {
         Insurance storage insurance = insurances[_address];
-
-        // TODO: value is undefined 
-        emit MontlyFeePayment(_address, insurance.plan.monthlyFee); 
-
-        // TODO: event handler tries to pay fee through payment gw.,
-        // if successful, calls confirmPayment() which will be a function
-        // with a modifier, onlyGateway, means, that only the gateway can call that function.
 
         if (!insurance.isActive) {
             insurance.isActive = true;
@@ -204,8 +226,9 @@ abstract contract GasInsurance is Ownable, ERC20 {
 
         insurance.nextPayment = block.timestamp + paymentFrequency;
         insurance.suspendDate = insurance.nextPayment + gracePeriod;
-    }
 
+        emit ConfirmPayment(_address, uint32(_value));
+    }
 
     function suspendClient(address _address)
         external
@@ -214,7 +237,9 @@ abstract contract GasInsurance is Ownable, ERC20 {
         onlyOwner
     {
         if (insurances[_address].isActive) {
-            setStatus(_address, false);
+            insurances[_address].isActive = false;
         }
+
+        emit ClientSuspended(_address);
     }
 }
