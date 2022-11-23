@@ -88,7 +88,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
@@ -101,13 +101,13 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "damagePrice",
 				"type": "uint256"
@@ -167,10 +167,10 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
+				"indexed": true,
+				"internalType": "uint32",
 				"name": "_value",
-				"type": "uint256"
+				"type": "uint32"
 			}
 		],
 		"name": "ConfirmPayment",
@@ -198,58 +198,16 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
 			},
 			{
-				"components": [
-					{
-						"internalType": "uint32",
-						"name": "id",
-						"type": "uint32"
-					},
-					{
-						"internalType": "string",
-						"name": "pictureIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "documentIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "uint32",
-						"name": "damagePrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint32",
-						"name": "compensationPrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint8",
-						"name": "numberOfConfirmations",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "confirmedBy",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "approved",
-						"type": "bool"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct DamageReport.Report",
-				"name": "report",
-				"type": "tuple"
+				"indexed": true,
+				"internalType": "uint32",
+				"name": "reportId",
+				"type": "uint32"
 			}
 		],
 		"name": "DamageDeclaration",
@@ -363,33 +321,16 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
 			},
 			{
-				"components": [
-					{
-						"internalType": "uint8",
-						"name": "planNumber",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint32",
-						"name": "monthlyFee",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint8",
-						"name": "compensationPercentage",
-						"type": "uint8"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct GasInsurance.Plan",
-				"name": "plan",
-				"type": "tuple"
+				"indexed": true,
+				"internalType": "uint8",
+				"name": "planNumber",
+				"type": "uint8"
 			}
 		],
 		"name": "InsuranceRegistration",
@@ -399,7 +340,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_address",
 				"type": "address"
@@ -418,10 +359,10 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
+				"indexed": true,
+				"internalType": "uint32",
 				"name": "_value",
-				"type": "uint256"
+				"type": "uint32"
 			}
 		],
 		"name": "MontlyFeePayment",
@@ -501,52 +442,10 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"components": [
-					{
-						"internalType": "uint32",
-						"name": "id",
-						"type": "uint32"
-					},
-					{
-						"internalType": "string",
-						"name": "pictureIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "documentIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "uint32",
-						"name": "damagePrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint32",
-						"name": "compensationPrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint8",
-						"name": "numberOfConfirmations",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "confirmedBy",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "approved",
-						"type": "bool"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct DamageReport.Report",
-				"name": "report",
-				"type": "tuple"
+				"indexed": true,
+				"internalType": "uint32",
+				"name": "reportId",
+				"type": "uint32"
 			}
 		],
 		"name": "ReportApproved",
@@ -556,58 +455,16 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "reviewer",
 				"type": "address"
 			},
 			{
-				"components": [
-					{
-						"internalType": "uint32",
-						"name": "id",
-						"type": "uint32"
-					},
-					{
-						"internalType": "string",
-						"name": "pictureIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "documentIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "uint32",
-						"name": "damagePrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint32",
-						"name": "compensationPrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint8",
-						"name": "numberOfConfirmations",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "confirmedBy",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "approved",
-						"type": "bool"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct DamageReport.Report",
-				"name": "report",
-				"type": "tuple"
+				"indexed": true,
+				"internalType": "uint32",
+				"name": "reportId",
+				"type": "uint32"
 			}
 		],
 		"name": "ReportConfirmed",
@@ -617,58 +474,16 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "reviewer",
 				"type": "address"
 			},
 			{
-				"components": [
-					{
-						"internalType": "uint32",
-						"name": "id",
-						"type": "uint32"
-					},
-					{
-						"internalType": "string",
-						"name": "pictureIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "documentIpfsHash",
-						"type": "string"
-					},
-					{
-						"internalType": "uint32",
-						"name": "damagePrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint32",
-						"name": "compensationPrice",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint8",
-						"name": "numberOfConfirmations",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "confirmedBy",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "approved",
-						"type": "bool"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct DamageReport.Report",
-				"name": "report",
-				"type": "tuple"
+				"indexed": true,
+				"internalType": "uint32",
+				"name": "reportId",
+				"type": "uint32"
 			}
 		],
 		"name": "ReportRefused",
@@ -717,13 +532,13 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint8",
 				"name": "planNumber",
 				"type": "uint8"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint32",
 				"name": "feeDifference",
 				"type": "uint32"
@@ -742,10 +557,10 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
+				"indexed": true,
+				"internalType": "uint8",
 				"name": "utilityTokens",
-				"type": "uint256"
+				"type": "uint8"
 			}
 		],
 		"name": "SwitchLowerPlan",
@@ -911,19 +726,6 @@
 				"internalType": "uint8",
 				"name": "",
 				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "gatewayAddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

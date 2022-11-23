@@ -363,8 +363,8 @@ class RegisterPageController extends GetxController {
 
   Future<void> submit(BuildContext context) async {
     if (frontside != null && backside != null) {
-      var str = await shareFrontsideOnIpfs();
-      await shareBacksideOnIpfs(str);
+      //var str = await shareFrontsideOnIpfs();
+      //await shareBacksideOnIpfs(str);
       takeOutInsurance();
     } else {
       const snackBar = SnackBar(
@@ -392,11 +392,12 @@ class RegisterPageController extends GetxController {
               AuthenticationService.instance.account!, BigInt.from(plan),
               credentials: AuthenticationService.instance.credentials!,
               transaction: transaction);
+      Timer(const Duration(seconds: 5), BottomNavBar.toOverview);
     } catch (error) {
       Get.to(ErrorScreen(errorDetails: error.toString()));
     }
     
-    Timer(const Duration(seconds: 5), BottomNavBar.toOverview);
+    
     
   }
 
