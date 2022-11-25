@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dart_web3/crypto.dart';
 import 'package:dart_web3/dart_web3.dart';
-import 'package:formula/config/transactionTester.dart';
+import 'package:formula/config/transaction_tester.dart';
 import 'package:http/http.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
@@ -15,7 +15,6 @@ class WalletConnectEthereumCredentials extends CustomTransactionSender {
 
   @override
   Future<EthereumAddress> extractAddress() {
-    // TODO: implement extractAddress
     throw UnimplementedError();
   }
 
@@ -37,7 +36,6 @@ class WalletConnectEthereumCredentials extends CustomTransactionSender {
   @override
   Future<MsgSignature> signToSignature(Uint8List payload,
       {int? chainId, bool isEIP1559 = false}) {
-    // TODO: implement signToSignature
     throw UnimplementedError();
   }
 }
@@ -57,7 +55,7 @@ class EthereumTransactionTester extends TransactionTester {
 
     final connector = WalletConnect(
       bridge: 'https://bridge.walletconnect.org',
-      clientMeta: PeerMeta(
+      clientMeta: const PeerMeta(
         name: 'WalletConnect',
         description: 'WalletConnect Developer App',
         url: 'https://walletconnect.org',
@@ -111,7 +109,6 @@ class EthereumTransactionTester extends TransactionTester {
 
   @override
   Future<String> signTransactions(SessionStatus session) {
-    // TODO: implement signTransactions
     throw UnimplementedError();
   }
 }

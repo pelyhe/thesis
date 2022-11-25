@@ -71,6 +71,7 @@ class AppFontSize {
   }
 }
 
+// ignore: non_constant_identifier_names
 Widget AppText(String text,
     {Color? color,
     double fontSize = 15,

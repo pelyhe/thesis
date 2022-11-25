@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:dart_web3/dart_web3.dart';
-import 'package:formula/config/env.dart';
-import 'package:formula/pages/error.dart';
-import 'package:formula/service/authService.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:formula/components/bottomNavBar.dart';
+import 'package:flutter/material.dart';
+import 'package:formula/components/app_button.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
+import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
-import 'package:formula/pages/loading.dart';
+import 'package:formula/pages/error.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -36,6 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (controller) {
           return Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: AppColors.orange,
               title: const Text('Gas Insurance'),
             ),
@@ -88,33 +88,13 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 25),
               Row(
                 children: [
-                  OutlinedButton(
-                    onPressed: controller.pickFrontside,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: AppColors.navigationColor,
-                          width: 1.5,
-                          style: BorderStyle.solid)),
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(165, 35)),
-                      maximumSize:
-                          MaterialStateProperty.all<Size>(const Size(180, 35)),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.perm_identity,
-                            color: AppColors.navigationColor, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Front side of your ID",
-                          style: TextStyle(
-                              color: AppColors.navigationColor, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
+                  AppButton(
+                      text: "Front side of your ID",
+                      icon: Icon(Icons.flip_to_front,
+                          color: AppColors.navigationColor, size: 16),
+                      min: const Size(165, 35),
+                      max: const Size(180, 35),
+                      onPressed: controller.pickFrontside),
                   const SizedBox(
                     width: 10,
                   ),
@@ -135,33 +115,13 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               Row(
                 children: [
-                  OutlinedButton(
-                    onPressed: controller.pickBackside,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: AppColors.navigationColor,
-                          width: 1.5,
-                          style: BorderStyle.solid)),
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(165, 35)),
-                      maximumSize:
-                          MaterialStateProperty.all<Size>(const Size(180, 35)),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.perm_identity,
-                            color: AppColors.navigationColor, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Back side of your ID",
-                          style: TextStyle(
-                              color: AppColors.navigationColor, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
+                  AppButton(
+                      text: "Back side of your ID",
+                      icon: Icon(Icons.flip_to_back,
+                          color: AppColors.navigationColor, size: 16),
+                      min: const Size(165, 35),
+                      max: const Size(180, 35),
+                      onPressed: controller.pickBackside),
                   const SizedBox(
                     width: 10,
                   ),
@@ -194,7 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
               createPlanCard(
                   'https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc',
                   1,
-                  '2000',
+                  '2500',
                   '20'),
               const SizedBox(height: 20),
               createPlanCard(
@@ -328,8 +288,6 @@ class RegisterPageController extends GetxController {
     if (result != null) {
       frontside = File(result.files.last.path!);
       update();
-    } else {
-      print('cancelled');
     }
   }
 
@@ -341,8 +299,6 @@ class RegisterPageController extends GetxController {
     if (result != null) {
       backside = File(result.files.last.path!);
       update();
-    } else {
-      print('cancelled');
     }
   }
 
@@ -387,18 +343,14 @@ class RegisterPageController extends GetxController {
         mode: LaunchMode.externalApplication);
 
     try {
-      await AuthenticationService.instance.contract!
-          .takeOutInsurance(
-              AuthenticationService.instance.account!, BigInt.from(plan),
-              credentials: AuthenticationService.instance.credentials!,
-              transaction: transaction);
+      await AuthenticationService.instance.contract!.takeOutInsurance(
+          AuthenticationService.instance.account!, BigInt.from(plan),
+          credentials: AuthenticationService.instance.credentials!,
+          transaction: transaction);
       Timer(const Duration(seconds: 5), BottomNavBar.toOverview);
     } catch (error) {
       Get.to(ErrorScreen(errorDetails: error.toString()));
     }
-    
-    
-    
   }
 
   shareFrontsideOnIpfs() async {
@@ -423,7 +375,7 @@ class RegisterPageController extends GetxController {
         'file', backside!.readAsBytes().asStream(), backside!.lengthSync(),
         filename: backside!.path.split('/').last));
     var res = await request.send();
-    final resBody = await res.stream.bytesToString();
+    await res.stream.bytesToString();
   }
 
   String getRandomString(int length) {

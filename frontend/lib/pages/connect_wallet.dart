@@ -1,23 +1,20 @@
 import 'dart:async';
 
-import 'package:formula/config/GasInsurance.g.dart';
-import 'package:formula/config/ethereumTransaction.dart';
-import 'package:http/http.dart' as http;
 import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:formula/config/GasInsurance.g.dart';
 import 'package:formula/config/env.dart';
+import 'package:formula/config/ethereum_transaction.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:slider_button/slider_button.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:walletconnect_dart/walletconnect_dart.dart';
 //import 'package:web3dart/web3dart.dart';
-import 'package:walletconnect_dart/src/providers/ethereum_walletconnect_provider.dart';
+import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 class ConnectWalletPage extends StatefulWidget {
   const ConnectWalletPage({Key? key}) : super(key: key);
@@ -101,9 +98,9 @@ class ConnectWalletController extends GetxController {
             ]));
 
     // Subscribe to events
-    connector.on('connect', (session) => print(session));
-    connector.on('session_update', (payload) => print(payload));
-    connector.on('disconnect', (session) => print(session));
+    connector.on('connect', (session) => debugPrint('$session'));
+    connector.on('session_update', (payload) => debugPrint('$payload'));
+    connector.on('disconnect', (session) => debugPrint('$session'));
 
     // Create a new session
     if (!connector.connected) {

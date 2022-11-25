@@ -1,9 +1,7 @@
-import 'dart:math';
-
-import 'package:formula/pages/changePlan.dart';
-import 'package:formula/pages/connectWallet.dart';
-import 'package:formula/pages/declareDamage.dart';
-import 'package:formula/pages/judgeReports.dart';
+import 'package:formula/pages/change_plan.dart';
+import 'package:formula/pages/connect_wallet.dart';
+import 'package:formula/pages/declare_damage.dart';
+import 'package:formula/pages/judge_reports.dart';
 import 'package:formula/pages/loading.dart';
 import 'package:formula/pages/overview.dart';
 import 'package:formula/pages/register.dart';

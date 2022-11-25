@@ -2,17 +2,14 @@ import 'dart:async';
 
 import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:formula/components/bottomNavBar.dart';
-import 'package:formula/components/payWithGitPopup.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
 import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
 import 'package:formula/pages/error.dart';
 import 'package:formula/pages/loading.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -98,7 +95,7 @@ class _ChangePlanPageState extends State<ChangePlanPage> {
                 createPlanCard(
                     'https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc',
                     1,
-                    '2000',
+                    '2500',
                     '20'),
                 const SizedBox(height: 20),
                 createPlanCard(

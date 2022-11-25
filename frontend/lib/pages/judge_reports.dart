@@ -1,21 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:dart_web3/credentials.dart';
 import 'package:dart_web3/dart_web3.dart';
-import 'package:formula/config/env.dart';
-import 'package:formula/pages/error.dart';
-import 'package:formula/pages/loading.dart';
-import 'package:formula/service/authService.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:formula/components/bottomNavBar.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
+import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
+import 'package:formula/pages/error.dart';
+import 'package:formula/pages/loading.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -49,10 +45,7 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
                       backgroundColor: Colors.transparent,
                       body: scaffoldBody(
                         context: context,
-                        mobileBody: controller.picture == null
-                            ? const ErrorScreen(
-                                errorDetails: "No reports to be reviewed yet!")
-                            : mobileBody(),
+                        mobileBody: mobileBody(),
                         tabletBody: mobileBody(),
                       ),
                       bottomNavigationBar: const BottomNavBar());
@@ -77,7 +70,9 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
           flex: 6,
           child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              child: controller.picture == null ? Container() : Image.file(File(controller.picture!.path))),
+              child: controller.picture == null
+                  ? Container()
+                  : Image.file(File(controller.picture!.path))),
         ),
         Flexible(
           flex: 1,
@@ -88,7 +83,7 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: ElevatedButton(
-                      child: Text("Not valid"),
+                      child: const Text("Not valid"),
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.red)),
@@ -99,7 +94,7 @@ class _JudgeReportsPageState extends State<JudgeReportsPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: ElevatedButton(
-                    child: Text("Valid"),
+                    child: const Text("Valid"),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.green)),
@@ -124,21 +119,21 @@ class JudgeReportsController extends GetxController {
     try {
       res = await AuthenticationService.instance.contract!
           .getRandomDamagePicture();
+      if (res.var1 != EthereumAddress.fromHex('0x0000000000000000000000000000000000000000')) {
+        acc = res.var1;
+        final path = res.var2;
+        final url = 'http://vm.niif.cloud.bme.hu:14434/getFile?path=$path';
+        final response = await http.get(Uri.parse(url));
+        String header = response.headers['content-disposition']!;
+        int fromIndex = header.indexOf('=');
+        String filename = header.substring(fromIndex + 1);
+        String dir = (await getApplicationDocumentsDirectory()).path;
+        String filePath = '$dir/$filename';
+        picture = await File(filePath).writeAsBytes(response.bodyBytes);
+        update();
+      }
     } catch (error) {
       Get.to(ErrorScreen(errorDetails: error.toString()));
-    }
-    if (res != null) {
-      acc = res.var1;
-      final path = res.var2;
-      final url = 'http://vm.niif.cloud.bme.hu:14434/getFile?path=$path';
-      final response = await http.get(Uri.parse(url));
-      String header = response.headers['content-disposition']!;
-      int fromIndex = header.indexOf('=');
-      String filename = header.substring(fromIndex + 1);
-      String dir = (await getApplicationDocumentsDirectory()).path;
-      String filePath = '$dir/$filename';
-      picture = await File(filePath).writeAsBytes(response.bodyBytes);
-      update();
     }
   }
 

@@ -1,11 +1,8 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:formula/general/route.dart';
 import 'package:formula/pages/error.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
 import 'package:formula/localization/localization.dart';
 import 'general/themes.dart';

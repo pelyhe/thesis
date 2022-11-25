@@ -3,17 +3,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:dart_web3/dart_web3.dart';
-import 'package:formula/components/declareDamagePopup.dart';
+import 'package:formula/components/declare_damage_popup.dart';
 import 'package:formula/config/env.dart';
 import 'package:formula/pages/error.dart';
 import 'package:formula/pages/loading.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:formula/components/AppTextField.dart';
-import 'package:formula/components/bottomNavBar.dart';
+import 'package:formula/components/app_text_field.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
@@ -316,8 +316,6 @@ class DeclareDamageController extends GetxController {
     if (result != null) {
       reportFile = File(result.files.last.path!);
       update();
-    } else {
-      print('cancelled');
     }
   }
 
@@ -329,8 +327,6 @@ class DeclareDamageController extends GetxController {
     if (result != null) {
       pictureFile = File(result.files.last.path!);
       update();
-    } else {
-      print('cancelled');
     }
   }
 

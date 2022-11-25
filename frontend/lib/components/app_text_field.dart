@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:formula/general/themes.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+// ignore: must_be_immutable
 class AppTextField<T> extends StatefulWidget {
   late FormControl<T> control;
   late String hint;

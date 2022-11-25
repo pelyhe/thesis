@@ -1,8 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:formula/components/bottomNavBar.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 

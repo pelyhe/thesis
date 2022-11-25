@@ -2,7 +2,7 @@
 /// @author Pelyhe Ádám - BME - MIT
 pragma solidity ^0.8.7;
 
-import "./DamageReport.sol";
+import "./DamageReportContract.sol";
 
 contract GasInsuranceToken is DamageReport{
     constructor() ERC20("Gas Insurance Token", "GIT") {

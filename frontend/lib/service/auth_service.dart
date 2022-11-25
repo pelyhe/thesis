@@ -1,6 +1,5 @@
 import 'package:dart_web3/credentials.dart';
 import 'package:formula/config/GasInsurance.g.dart';
-import 'package:formula/config/ethereumTransaction.dart';
 import 'package:get/get.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 

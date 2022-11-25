@@ -1,17 +1,14 @@
-import 'dart:async';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_web3/dart_web3.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:formula/components/bottomNavBar.dart';
-import 'package:formula/components/resignPopup.dart';
+import 'package:formula/components/bottom_nav_bar.dart';
+import 'package:formula/components/resign_popup.dart';
 import 'package:formula/config/env.dart';
 import 'package:formula/general/fonts.dart';
 import 'package:formula/general/themes.dart';
 import 'package:formula/general/utils.dart';
 import 'package:formula/pages/error.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -181,7 +178,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (BuildContext ctx) => ResignPopup());
+                          builder: (BuildContext ctx) => const ResignPopup());
                     },
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(

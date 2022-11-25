@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:dart_web3/dart_web3.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:formula/config/env.dart';
 import 'package:formula/pages/error.dart';
-import 'package:formula/service/authService.dart';
+import 'package:formula/service/auth_service.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
