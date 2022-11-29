@@ -261,7 +261,7 @@ class _OverviewPageState extends State<OverviewPage> {
             showPlanCard(
                 'https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-52379.jpg?w=740&t=st=1667135947~exp=1667136547~hmac=510b3739b53da57d02d563f2160e09fd72f3f5de14c0b9c8e3eb48696286e1bc',
                 1,
-                '2000',
+                '2500',
                 '20')
           else if (controller.currentPlan == 2)
             showPlanCard(
@@ -375,9 +375,9 @@ class _OverviewPageState extends State<OverviewPage> {
 
 class OverviewController extends GetxController {
   bool isInsuranceValid = false;
-  int currentPlan = 2;
+  int currentPlan = 1;
   int daysLeft = 0, hoursLeft = 0, minutesLeft = 0; // getNextPayment - now() in unix time
-  int gitTokens = 9;
+  int gitTokens = 0;
 
   init() async {
     isInsuranceValid = await AuthenticationService.instance.contract!

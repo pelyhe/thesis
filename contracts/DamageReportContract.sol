@@ -134,6 +134,7 @@ abstract contract DamageReport is GasInsurance {
         report.numberOfConfirmations++;
         _mint(reviewer, 1);
         if (report.numberOfConfirmations > 1) {
+            activeReports--;
             report.approved = true;
             approvedReports[reviewee] = report;
             delete report_keys[report.id - 1]; // deletes the element from key, and leave a space there
